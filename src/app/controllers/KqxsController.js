@@ -12,11 +12,29 @@ class KqxsController {
             });
 
             await kqxs.save();
+
+            res.status(200).json({
+                success: true,
+            });
         } catch (error) {
             return res
                 .status(500)
                 .json({ success: false, message: "Internal server error" });
         }
+    }
+
+    async find(req, res, next) {
+        try {
+            const kqxs = await Kqxs.find({
+                resultDate: req.body.resultDate,
+                province: req.body.province,
+            });
+
+            res.status(200).json({
+                success: true,
+                kqxs,
+            });
+        } catch (error) {}
     }
 
     async createCron(data) {
@@ -48,6 +66,32 @@ class KqxsController {
             const kqxs = await Kqxs.find({
                 resultDate: req.body.date,
             });
+
+            return res.status(200).json({
+                success: true,
+                data: kqxs,
+            });
+        } catch (error) {
+            return res
+                .status(500)
+                .json({ success: false, message: "Internal server error" });
+        }
+    }
+
+    // [POST] /api/v1/kqxs/findKqxsByDateAndProvince
+    async findKqxsByDateAndProvince(req, res, next) {
+        try {
+            const kqxs = await Kqxs.findOneAndUpdate(
+                {
+                    resultDate: req.body.resultDate,
+                    province: req.body.province,
+                },
+                {
+                    $set: { [`result.${req.body.index}`]: req.body.newNum },
+                    updateDate: Date.now(),
+                },
+                { new: true }
+            );
 
             return res.status(200).json({
                 success: true,

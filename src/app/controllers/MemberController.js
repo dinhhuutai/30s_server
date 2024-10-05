@@ -61,6 +61,20 @@ class MemberController {
         }
     }
 
+    // [POST] /api/v1/member/findMemberByIdTelegramCron
+    async findMemberByIdTelegramCron(idTelegram) {
+        try {
+            const member = await Member.findOne({ idTelegram });
+
+            return {
+                success: true,
+                member,
+            };
+        } catch (error) {
+            return { success: false, message: "Internal server error" };
+        }
+    }
+
     // [POST] /api/v1/member/findMemberByNameAndPhone/:idUser?name=''&sortName=''&sortCreateDate=''
     async findMemberByNameAndPhone(req, res, next) {
         try {
@@ -102,7 +116,7 @@ class MemberController {
             const resDelSms = await Sms.deleteMany({
                 idMember: req.params.id,
             });
-            
+
             const resDelRevenue = await Revenue.deleteMany({
                 idMember: req.params.id,
             });
@@ -121,10 +135,19 @@ class MemberController {
         try {
             const id = req.params.id;
 
+            let codeName = {};
+
+            if (req.body.name) {
+                codeName = {
+                    codeName: req.body.name.toLowerCase(),
+                };
+            }
+
             const member = await Member.findByIdAndUpdate(
                 id,
                 {
                     ...req.body,
+                    ...codeName,
                     updateDate: Date.now(),
                 },
                 { new: true }

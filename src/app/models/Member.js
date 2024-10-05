@@ -22,7 +22,7 @@ const MemberSchema = new Schema({
         type: Array,
     },
     idTelegram: {
-        type: String,
+        type: Number,
     },
     runNumber: {
         type: Boolean,

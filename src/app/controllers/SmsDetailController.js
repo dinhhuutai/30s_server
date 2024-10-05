@@ -1,3 +1,4 @@
+const Sms = require("../models/Sms");
 const SmsDetail = require("../models/SmsDetail");
 const shortid = require("shortid");
 
@@ -28,6 +29,29 @@ class SmsDetailController {
         }
     }
 
+    async createCron(req) {
+        try {
+            let smsData = req;
+
+            smsData = smsData.map((e) => {
+                return {
+                    ...e,
+                    encodeId: shortid.generate(),
+                };
+            });
+
+            const smsDetail = await SmsDetail.insertMany(smsData);
+
+            return {
+                success: true,
+                smsDetail,
+            };
+        } catch (error) {
+            console.log(error);
+            return { success: false, message: "Internal server error" };
+        }
+    }
+
     // [POST] /api/v1/smsDetail/findSmsDetailByIdSms/:idSms
     async findSmsDetailByIdSms(req, res, next) {
         try {
@@ -47,6 +71,58 @@ class SmsDetailController {
         }
     }
 
+    async findSmsDetailByRevenueWin(req, res, next) {
+        try {
+            const idMember = req.body.idMember;
+            const resultDate = req.query.resultDate;
+            const domain = req.body.domain;
+
+            const dayStart = new Date(resultDate);
+            const dayEnd = new Date(resultDate);
+            dayStart.setUTCHours(0, 0, 0, 0);
+            dayEnd.setDate(dayEnd.getDate() + 1);
+            dayEnd.setUTCHours(0, 0, 0, 0);
+
+            console.log("dayStart: ", dayStart);
+            console.log("dayEnd: ", dayEnd);
+            console.log("resultDateSMSDETAIl: ", resultDate);
+
+            const sms = await Sms.find({
+                idMember,
+                resultDate: { $gte: dayStart, $lt: dayEnd },
+                deleted: false,
+                domain,
+            });
+
+            let smsDetails = [];
+
+            await Promise.all(
+                sms.map(async (sm) => {
+                    const res = await SmsDetail.find({
+                        idSms: sm._id,
+                        tientrung: { $gt: 0 },
+                    });
+
+                    if (res.length > 0) {
+                        console.log("res: ", res);
+                        smsDetails.push(...res);
+                    }
+                })
+            );
+
+            console.log("smsDetails: ", smsDetails);
+
+            return res.status(200).json({
+                success: true,
+                smsDetails,
+            });
+        } catch (error) {
+            console.log(error);
+            return res
+                .status(500)
+                .json({ success: false, message: "Internal server error" });
+        }
+    }
 
     async findSmsDetailByIdSmsCron(idSms) {
         try {
@@ -125,6 +201,18 @@ class SmsDetailController {
             return res
                 .status(500)
                 .json({ success: false, message: "Internal server error" });
+        }
+    }
+
+    async deleteCron(idSms) {
+        try {
+            const resDel = await SmsDetail.deleteMany({ idSms });
+
+            return {
+                success: true,
+            };
+        } catch (error) {
+            return { success: false, message: "Internal server error" };
         }
     }
 }

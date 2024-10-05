@@ -16,6 +16,7 @@ const payDaThang = require("./pay/payDaThang");
 const payDaXien = require("./pay/payDaXien");
 const MemberController = require("../app/controllers/MemberController");
 const RevenueController = require("../app/controllers/RevenueController");
+const OnlyAdminEditController = require("../app/controllers/OnlyAdminEditController");
 
 function autoFindResultKQXSMN() {
     const fetchLotteryResults = async () => {
@@ -26,35 +27,38 @@ function autoFindResultKQXSMN() {
             const year = now.getFullYear();
             const dayOfWeek = now.getDay() + 1;
 
+            const resOnlyAdminEdit = await OnlyAdminEditController.findCron();
+            const rs = resOnlyAdminEdit.onlyAdminEdit[0];
+
             if (dayOfWeek === 2) {
-                await findKqxs("tphc", day, month, year, "mn", "tp");
-                await findKqxs("doth", day, month, year, "mn", "dt");
-                await findKqxs("cama", day, month, year, "mn", "cm");
+                await findKqxs(rs?.urltp, day, month, year, "mn", "tp");
+                await findKqxs(rs?.urldt, day, month, year, "mn", "dt");
+                await findKqxs(rs?.urlcm, day, month, year, "mn", "cm");
             } else if (dayOfWeek === 3) {
-                await findKqxs("betr", day, month, year, "mn", "br");
-                await findKqxs("vuta", day, month, year, "mn", "vt");
-                await findKqxs("bali", day, month, year, "mn", "bi");
+                await findKqxs(rs?.urlbr, day, month, year, "mn", "br");
+                await findKqxs(rs?.urlvt, day, month, year, "mn", "vt");
+                await findKqxs(rs?.urlbi, day, month, year, "mn", "bi");
             } else if (dayOfWeek === 4) {
-                await findKqxs("dona", day, month, year, "mn", "dn");
-                await findKqxs("cath", day, month, year, "mn", "ct");
-                await findKqxs("sotr", day, month, year, "mn", "st");
+                await findKqxs(rs?.urldn, day, month, year, "mn", "dn");
+                await findKqxs(rs?.urlct, day, month, year, "mn", "ct");
+                await findKqxs(rs?.urlst, day, month, year, "mn", "st");
             } else if (dayOfWeek === 5) {
-                await findKqxs("tani", day, month, year, "mn", "tn");
-                await findKqxs("angi", day, month, year, "mn", "ag");
-                await findKqxs("bith", day, month, year, "mn", "bt");
+                await findKqxs(rs?.urltn, day, month, year, "mn", "tn");
+                await findKqxs(rs?.urlag, day, month, year, "mn", "ag");
+                await findKqxs(rs?.urlbt, day, month, year, "mn", "bt");
             } else if (dayOfWeek === 6) {
-                await findKqxs("bidu", day, month, year, "mn", "bu");
-                await findKqxs("vilo", day, month, year, "mn", "vl");
-                await findKqxs("trvi", day, month, year, "mn", "tv");
+                await findKqxs(rs?.urlbu, day, month, year, "mn", "bu");
+                await findKqxs(rs?.urlvl, day, month, year, "mn", "vl");
+                await findKqxs(rs?.urltv, day, month, year, "mn", "tv");
             } else if (dayOfWeek === 7) {
-                await findKqxs("tphc", day, month, year, "mn", "tp");
-                await findKqxs("loan", day, month, year, "mn", "la");
-                await findKqxs("biph", day, month, year, "mn", "bp");
-                await findKqxs("hagi", day, month, year, "mn", "hg");
+                await findKqxs(rs?.urltp, day, month, year, "mn", "tp");
+                await findKqxs(rs?.urlla, day, month, year, "mn", "la");
+                await findKqxs(rs?.urlbp, day, month, year, "mn", "bp");
+                await findKqxs(rs?.urlhg, day, month, year, "mn", "hg");
             } else if (dayOfWeek === 1) {
-                await findKqxs("tigi", day, month, year, "mn", "tg");
-                await findKqxs("kigi", day, month, year, "mn", "kg");
-                await findKqxs("dalat", day, month, year, "mn", "lt");
+                await findKqxs(rs?.urltg, day, month, year, "mn", "tg");
+                await findKqxs(rs?.urlkg, day, month, year, "mn", "kg");
+                await findKqxs(rs?.urllt, day, month, year, "mn", "lt");
             }
         } catch (error) {
             console.error("Lỗi khi lấy kết quả xổ số:", error);
@@ -62,12 +66,27 @@ function autoFindResultKQXSMN() {
     };
 
     const findKqxs = async (url, day, month, year, domain, province) => {
-        const response = await axios.get(
-            `https://xoso188.net/api/front/open/lottery/history/list/1/${url}`
-        );
+        const response = await axios.get(`${url}`);
         const results = response.data;
 
-        const nowKQXS = parseDate(results.t.issueList[0].turnNum);
+        let stt = 0;
+        results.t.issueList.map((item, index) => {
+            const nowKQXS = parseDate(item.turnNum);
+            const dayKQXS = nowKQXS.getDate();
+            const monthKQXS = nowKQXS.getMonth();
+            const yearKQXS = nowKQXS.getFullYear();
+
+            if (
+                results &&
+                day === dayKQXS &&
+                month === monthKQXS &&
+                year === yearKQXS
+            ) {
+                stt = index;
+            }
+        });
+
+        const nowKQXS = parseDate(results.t.issueList[stt].turnNum);
         const dayKQXS = nowKQXS.getDate();
         const monthKQXS = nowKQXS.getMonth();
         const yearKQXS = nowKQXS.getFullYear();
@@ -78,19 +97,19 @@ function autoFindResultKQXSMN() {
             month === monthKQXS &&
             year === yearKQXS
         ) {
-            await addKqxs(results, domain, province);
+            await addKqxs(results, domain, province, stt);
         }
     };
 
-    const addKqxs = async (results, domain, province) => {
+    const addKqxs = async (results, domain, province, stt) => {
         try {
             const kqxs = await KqxsController.findCron({
-                resultDate: results.t.issueList[0].turnNum,
+                resultDate: results.t.issueList[stt].turnNum,
                 province: province,
             });
 
             if (kqxs.length === 0) {
-                let data = JSON.parse(results.t.issueList[0].detail);
+                let data = JSON.parse(results.t.issueList[stt].detail);
                 data = data.reverse();
                 data = data.map((item) => item.split(","));
 
@@ -99,7 +118,7 @@ function autoFindResultKQXSMN() {
                 const kqxsObj = {
                     domain: domain,
                     province: province,
-                    resultDate: results.t.issueList[0].turnNum,
+                    resultDate: results.t.issueList[stt].turnNum,
                     result: rs,
                 };
 

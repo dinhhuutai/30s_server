@@ -7,6 +7,7 @@ const db = require("./config/db");
 const autoFindResultKQXSMB = require("./util/autoFindResultKQXSMB");
 const autoFindResultKQXSMN = require("./util/autoFindResultKQXSMN");
 const autoFindResultKQXSMT = require("./util/autoFindResultKQXSMT");
+const chatBotTelegram = require("./util/chatBotTelegram");
 
 const app = express();
 
@@ -16,7 +17,7 @@ db.connect();
 const corsOptions = {
     //origin: "http://tocvietxuanloc.com",
     origin: "http://localhost:3000",
-    //origin: "https://8a1f-2402-800-639d-9dc9-f0b0-5ee1-48df-a20f.ngrok-free.app",
+    //origin: "https://7882-2402-800-63ad-dbeb-15dd-d7ec-bf16-b6c1.ngrok-free.app",
     credentials: true, //access-control-allow-credentials:true
     optionSuccessStatus: 200,
 };
@@ -29,6 +30,8 @@ routes(app);
 autoFindResultKQXSMB();
 autoFindResultKQXSMN();
 autoFindResultKQXSMT();
+
+chatBotTelegram();
 
 const PORT = 5000;
 

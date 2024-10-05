@@ -13,5 +13,6 @@ router.get("/check", verifyToken, userController.checkUser);
 router.post("/update/:id", verifyToken, userController.update);
 
 router.post("/create", userController.create);
+router.post("/find", userController.find);
 
 module.exports = router;

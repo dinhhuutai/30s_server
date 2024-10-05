@@ -117,6 +117,7 @@ class UserController {
 
             let newUser = new User({
                 ...req.body,
+                codeName: req.body.name.toLowerCase(),
                 encodeId: shortid.generate(),
                 password: hashedPassword,
             });
@@ -256,7 +257,64 @@ class UserController {
         }
     }
 
-    async create(req, res, next) {}
+    async create(req, res, next) {
+        const { name, username, password } = req.body;
+
+        if (!name) {
+            return res
+                .status(400)
+                .json({ success: false, message: "Name is required" });
+        }
+        if (!username) {
+            return res
+                .status(400)
+                .json({ success: false, message: "Username is required" });
+        }
+        if (!password) {
+            return res
+                .status(400)
+                .json({ success: false, message: "Password is required" });
+        }
+
+        try {
+            const user = await User.findOne({ username });
+            if (user) {
+                return res.status(400).json({
+                    success: false,
+                    message: "Tên tài khoản đã tồn tại",
+                });
+            }
+
+            const hashedPassword = await argon2.hash(password);
+
+            let newUser = new User({
+                ...req.body,
+                codeName: req.body.name.toLowerCase(),
+                encodeId: shortid.generate(),
+                password: hashedPassword,
+            });
+
+            await newUser.save();
+
+            const refreshToken = generateRefreshToken(newUser);
+
+            // Lưu refreshToken vào database
+            newUser = await User.findByIdAndUpdate(
+                newUser._id,
+                { refreshToken },
+                { new: true }
+            ).select("-password");
+
+            res.status(200).json({
+                success: true,
+            });
+        } catch (error) {
+            console.log(error);
+            return res
+                .status(500)
+                .json({ success: false, message: "Internal server error" });
+        }
+    }
 
     async delete(req, res, next) {}
 
@@ -264,10 +322,40 @@ class UserController {
         try {
             const id = req.params.id;
 
+            let codeName = {};
+
+            if (req.body.name) {
+                codeName = {
+                    codeName: req.body.name.toLowerCase(),
+                };
+            }
+
+            let password = {};
+
+            if (req.body.password !== "" && req.body.password) {
+                const hashedPassword = await argon2.hash(req.body.password);
+
+                password = {
+                    password: hashedPassword,
+                };
+                let userTmp = await User.findById(id);
+
+                const refreshToken = generateRefreshToken(userTmp);
+
+                // Lưu refreshToken vào database
+                await User.findByIdAndUpdate(
+                    id,
+                    { refreshToken },
+                    { new: true }
+                ).select("-password");
+            }
+
             const user = await User.findByIdAndUpdate(
                 id,
                 {
                     ...req.body,
+                    ...password,
+                    ...codeName,
                     updateDate: Date.now(),
                 },
                 { new: true }
@@ -275,9 +363,71 @@ class UserController {
 
             return res.json({ success: true, user });
         } catch (error) {
+            console.log(error);
             return res
                 .status(500)
                 .json({ success: false, message: "Internal server error" });
+        }
+    }
+
+    // [POST] /api/v1/user/find
+    async find(req, res, next) {
+        const limit = req.query.limit;
+        const skip = req.query.skip;
+        const search = req?.query?.search;
+
+        const name = Number(req?.query?.sortName);
+        const createDate = Number(req?.query?.sortCreateDate);
+
+        let sort = { isAdmin: -1 };
+        if (name === 1 || name === -1) {
+            sort = { ...sort, codeName: name };
+        } else if (createDate === 1 || createDate === -1) {
+            sort = { ...sort, createDate: createDate };
+        }
+
+        try {
+            const user = await User.find({
+                name: { $regex: new RegExp(search, "i") },
+            })
+                .limit(limit)
+                .skip(skip)
+                .sort(sort);
+
+            const totalUser = await User.countDocuments({
+                name: { $regex: new RegExp(search, "i") },
+            });
+
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+            const totalAddToday = await User.countDocuments({
+                createDate: { $gte: today },
+            });
+
+            res.status(200).json({
+                success: true,
+                user,
+                totalUser,
+                totalAddToday,
+            });
+        } catch (error) {
+            console.log(error);
+            return res
+                .status(500)
+                .json({ success: false, message: "Internal server error" });
+        }
+    }
+
+    async findUserByIdTelegramCron(idTelegram) {
+        try {
+            const user = await User.findOne({ idTelegram });
+
+            return {
+                success: true,
+                user,
+            };
+        } catch (error) {
+            return { success: false, message: "Internal server error" };
         }
     }
 }

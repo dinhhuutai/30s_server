@@ -11,6 +11,20 @@ const UserSchema = new Schema({
         type: String,
         require: true,
     },
+    codeName: {
+        type: String,
+    },
+    isAdmin: {
+        type: Boolean,
+        default: false,
+    },
+    isActive: {
+        type: Boolean,
+        default: true,
+    },
+    phone: {
+        type: String,
+    },
     username: {
         type: String,
         require: true,
@@ -20,8 +34,7 @@ const UserSchema = new Schema({
         require: true,
     },
     idTelegram: {
-        type: String,
-        require: true,
+        type: Number,
     },
     quantityStorage: {
         type: Number,

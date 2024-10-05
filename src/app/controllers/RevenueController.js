@@ -46,7 +46,7 @@ class RevenueController {
             const revenue = await Revenue.find({
                 idMember: req.body.idMember,
                 domain: req.body.domain,
-                resultDate: req.body.resultDate,
+                resultDate: req.query.resultDate,
             });
 
             return res.status(200).json({
@@ -131,10 +131,10 @@ class RevenueController {
                 resultDate: req.body.resultDate,
             });
 
-            console.log('revenues: ', revenues);
-            console.log('idUser: ', req.body.idUser);
-            console.log('domain: ', req.body.domain);
-            console.log('resultDate: ', req.body.resultDate);
+            console.log("revenues: ", revenues);
+            console.log("idUser: ", req.body.idUser);
+            console.log("domain: ", req.body.domain);
+            console.log("resultDate: ", req.body.resultDate);
 
             await Promise.all(
                 revenues.map(async (revenue, index) => {

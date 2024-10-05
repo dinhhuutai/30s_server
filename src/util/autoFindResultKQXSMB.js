@@ -16,6 +16,7 @@ const payXiuChuDau = require("./pay/payXiuChuDau");
 const payXiuChuDuoi = require("./pay/payXiuChuDuoi");
 const payDaThang = require("./pay/payDaThang");
 const payDaXien = require("./pay/payDaXien");
+const OnlyAdminEditController = require("../app/controllers/OnlyAdminEditController");
 
 function autoFindResultKQXSMB() {
     const fetchLotteryResults = async () => {
@@ -25,12 +26,30 @@ function autoFindResultKQXSMB() {
             const month = now.getMonth();
             const year = now.getFullYear();
 
-            const response = await axios.get(
-                "https://xoso188.net/api/front/open/lottery/history/list/1/miba"
-            );
+            const resOnlyAdminEdit = await OnlyAdminEditController.findCron();
+            const rs = resOnlyAdminEdit.onlyAdminEdit[0];
+
+            const response = await axios.get(`${rs?.urlmb}`);
             const results = response.data;
 
-            const nowKQXS = parseDate(results.t.issueList[0].turnNum);
+            let stt = 0;
+            results.t.issueList.map((item, index) => {
+                const nowKQXS = parseDate(item.turnNum);
+                const dayKQXS = nowKQXS.getDate();
+                const monthKQXS = nowKQXS.getMonth();
+                const yearKQXS = nowKQXS.getFullYear();
+
+                if (
+                    results &&
+                    day === dayKQXS &&
+                    month === monthKQXS &&
+                    year === yearKQXS
+                ) {
+                    stt = index;
+                }
+            });
+
+            const nowKQXS = parseDate(results.t.issueList[stt].turnNum);
 
             const dayKQXS = nowKQXS.getDate();
             const monthKQXS = nowKQXS.getMonth();
@@ -42,22 +61,22 @@ function autoFindResultKQXSMB() {
                 month === monthKQXS &&
                 year === yearKQXS
             ) {
-                await addKqxs(results, "mb", "mb");
+                await addKqxs(results, "mb", "mb", stt);
             }
         } catch (error) {
             console.error("Lỗi khi lấy kết quả xổ số:", error);
         }
     };
 
-    const addKqxs = async (results, domain, province) => {
+    const addKqxs = async (results, domain, province, stt) => {
         try {
             const kqxs = await KqxsController.findCron({
-                resultDate: results.t.issueList[0].turnNum,
+                resultDate: results.t.issueList[stt].turnNum,
                 province: province,
             });
 
             if (kqxs.length === 0) {
-                let data = JSON.parse(results.t.issueList[0].detail);
+                let data = JSON.parse(results.t.issueList[stt].detail);
                 data = data.map((item) => item.split(","));
 
                 let rs = data.reduce((acc, curr) => acc.concat(curr), []);
@@ -68,7 +87,7 @@ function autoFindResultKQXSMB() {
                 const kqxsObj = {
                     domain: domain,
                     province: province,
-                    resultDate: results.t.issueList[0].turnNum,
+                    resultDate: results.t.issueList[stt].turnNum,
                     result: rs,
                 };
 

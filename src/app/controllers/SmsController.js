@@ -28,6 +28,27 @@ class SmsController {
         }
     }
 
+    async createCron(req) {
+        try {
+            const sms = new Sms({
+                ...req,
+                contentEdit: req.content,
+                encodeId: shortid.generate(),
+                createDate: Date.now(),
+            });
+
+            await sms.save();
+
+            return {
+                success: true,
+                sms,
+            };
+        } catch (error) {
+            console.log(error);
+            return { success: false, message: "Internal server error" };
+        }
+    }
+
     // [POST] /api/v1/sms/findSmsById/:id
     async findSmsById(req, res, next) {
         try {
@@ -81,8 +102,6 @@ class SmsController {
                 };
             }
 
-            console.log(deleted);
-
             const dayStart = new Date(resultDate);
             const dayEnd = new Date(resultDate);
             dayStart.setUTCHours(0, 0, 0, 0);
@@ -91,7 +110,7 @@ class SmsController {
 
             console.log("dayStart: ", dayStart);
             console.log("dayEnd: ", dayEnd);
-            console.log("resultDate: ", resultDate);
+            console.log("resultDateSMS: ", resultDate);
 
             const sms = await Sms.find({
                 idUser: req.params.idUser,
@@ -223,10 +242,10 @@ class SmsController {
                 { new: true }
             );
 
-            res.status(200).json({
+            return {
                 success: true,
                 sms,
-            });
+            };
         } catch (error) {}
     }
 
@@ -259,14 +278,15 @@ class SmsController {
 
     async findSmsByStatus(req, res, next) {
         try {
-            const dayStart = new Date(req.body.date);
-            const dayEnd = new Date(req.body.date);
+            const dayStart = new Date(req.query.date);
+            const dayEnd = new Date(req.query.date);
             dayStart.setUTCHours(0, 0, 0, 0);
             dayEnd.setDate(dayEnd.getDate() + 1);
             dayEnd.setUTCHours(0, 0, 0, 0);
 
             console.log("dayStart: ", dayStart);
             console.log("dayEnd: ", dayEnd);
+            console.log("resultDateSMS: ", req.query.date);
 
             const sms = await Sms.find({
                 statusSms: { $in: ["Đang xử lý", "Đã xử lý", "Đã xổ"] },
@@ -295,6 +315,7 @@ class SmsController {
 
             console.log("dayStart: ", dayStart);
             console.log("dayEnd: ", dayEnd);
+            console.log("resultDateSMS: ", req.query.date);
 
             const sms = await Sms.find({
                 idMember,
@@ -315,14 +336,15 @@ class SmsController {
 
     async findSmsByIdMember(req, res, next) {
         try {
-            const dayStart = new Date(req.body.date);
-            const dayEnd = new Date(req.body.date);
+            const dayStart = new Date(req.query.date);
+            const dayEnd = new Date(req.query.date);
             dayStart.setUTCHours(0, 0, 0, 0);
             dayEnd.setDate(dayEnd.getDate() + 1);
             dayEnd.setUTCHours(0, 0, 0, 0);
 
             console.log("dayStart: ", dayStart);
             console.log("dayEnd: ", dayEnd);
+            console.log("resultDateSMS: ", req.query.date);
 
             const sms = await Sms.find({
                 idMember: req.body.idMember,
