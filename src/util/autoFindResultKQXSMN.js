@@ -132,6 +132,16 @@ function autoFindResultKQXSMN() {
     };
 
     cron.schedule(
+        "* * * * * *",
+        (job) => {
+            console.log(123456);
+        },
+        {
+            timezone: "Asia/Ho_Chi_Minh", // Thay đổi nếu bạn ở múi giờ khác
+        }
+    );
+
+    cron.schedule(
         "*/1 16 * * *",
         (job) => {
             // Lấy thời gian hiện tại

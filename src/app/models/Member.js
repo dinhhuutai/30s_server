@@ -24,6 +24,9 @@ const MemberSchema = new Schema({
     idTelegram: {
         type: Number,
     },
+    idWhatsApp: {
+        type: String,
+    },
     runNumber: {
         type: Boolean,
         default: false,

@@ -8,6 +8,7 @@ const autoFindResultKQXSMB = require("./util/autoFindResultKQXSMB");
 const autoFindResultKQXSMN = require("./util/autoFindResultKQXSMN");
 const autoFindResultKQXSMT = require("./util/autoFindResultKQXSMT");
 const chatBotTelegram = require("./util/chatBotTelegram");
+const chatBotWhatsApp = require("./util/chatBotWhatsApp");
 
 const app = express();
 
@@ -32,6 +33,7 @@ autoFindResultKQXSMN();
 autoFindResultKQXSMT();
 
 chatBotTelegram();
+chatBotWhatsApp(app);
 
 const PORT = 5000;
 

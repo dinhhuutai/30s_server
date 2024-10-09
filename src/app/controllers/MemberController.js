@@ -61,10 +61,22 @@ class MemberController {
         }
     }
 
-    // [POST] /api/v1/member/findMemberByIdTelegramCron
     async findMemberByIdTelegramCron(idTelegram) {
         try {
             const member = await Member.findOne({ idTelegram });
+
+            return {
+                success: true,
+                member,
+            };
+        } catch (error) {
+            return { success: false, message: "Internal server error" };
+        }
+    }
+
+    async findMemberByIdWhatsAppCron(idWhatsApp) {
+        try {
+            const member = await Member.findOne({ idWhatsApp });
 
             return {
                 success: true,

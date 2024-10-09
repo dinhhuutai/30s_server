@@ -121,6 +121,9 @@ const OnlyAdminEditSchema = new Schema({
     tokenChatBotTelegram: {
         type: String,
     },
+    tokenChatBotWhatsApp: {
+        type: String,
+    },
 });
 
 module.exports = mongoose.model("onlyAdminEdits", OnlyAdminEditSchema);

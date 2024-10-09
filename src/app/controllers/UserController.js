@@ -430,6 +430,19 @@ class UserController {
             return { success: false, message: "Internal server error" };
         }
     }
+
+    async findUserByPhoneWhatsAppCron(phone) {
+        try {
+            const user = await User.findOne({ phone });
+
+            return {
+                success: true,
+                user,
+            };
+        } catch (error) {
+            return { success: false, message: "Internal server error" };
+        }
+    }
 }
 
 module.exports = new UserController();
