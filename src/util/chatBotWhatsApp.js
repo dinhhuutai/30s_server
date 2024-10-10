@@ -24,7 +24,7 @@ async function chatBotWhatsApp(app) {
             if (message === "/id") {
                 const options = {
                     method: "POST",
-                    url: `https://gate.whapi.cloud/messages/text?token=${rs?.tokenChatBotTelegram}`,
+                    url: `https://gate.whapi.cloud/messages/text?token=${rs?.tokenChatBotWhatsApp}`,
                     headers: {
                         accept: "application/json",
                         "content-type": "application/json",
@@ -40,13 +40,17 @@ async function chatBotWhatsApp(app) {
                     if (error) throw new Error(error);
                 });
             } else {
+                console.log(sdtSend);
                 if (sdtSend !== "0906411676") {
+                    console.log(message);
                     const tongxac = await handleSms(message, chatId, sdtSend);
                 }
             }
 
             res.sendStatus(200);
-        } catch (error) {}
+        } catch (error) {
+            console.log(error);
+        }
     });
 }
 

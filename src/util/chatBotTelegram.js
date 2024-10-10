@@ -34,6 +34,7 @@ async function chatBotTelegram() {
         if (msg.text === "/id") {
             bot.sendMessage(chatId, `${chatId}`);
         } else {
+            console.log(chatId)
             const tongxac = await handleSms(msg.text, chatId, userId);
 
             if (tongxac && tongxac > 0) {
