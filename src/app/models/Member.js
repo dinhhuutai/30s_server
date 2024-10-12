@@ -64,6 +64,12 @@ const MemberSchema = new Schema({
     trungdaxienMN: {
         type: Number,
     },
+    typeTrungdathangMN: {
+        type: Boolean,
+    },
+    typeTrungdaxienMN: {
+        type: Boolean,
+    },
     trung3conMN: {
         type: Number,
     },
@@ -106,6 +112,12 @@ const MemberSchema = new Schema({
     trungdaxienMT: {
         type: Number,
     },
+    typeTrungdathangMT: {
+        type: Boolean,
+    },
+    typeTrungdaxienMT: {
+        type: Boolean,
+    },
     trung3conMT: {
         type: Number,
     },
@@ -145,8 +157,8 @@ const MemberSchema = new Schema({
     trungdathangMB: {
         type: Number,
     },
-    trungdaxienMB: {
-        type: Number,
+    typeTrungdathangMB: {
+        type: Boolean,
     },
     trung3conMB: {
         type: Number,

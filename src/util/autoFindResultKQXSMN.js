@@ -14,6 +14,7 @@ const payXiuChuDau = require("./pay/payXiuChuDau");
 const payXiuChuDuoi = require("./pay/payXiuChuDuoi");
 const payDaThang = require("./pay/payDaThang");
 const payDaXien = require("./pay/payDaXien");
+const payBaylo = require("./pay/payBayLo");
 const MemberController = require("../app/controllers/MemberController");
 const RevenueController = require("../app/controllers/RevenueController");
 const OnlyAdminEditController = require("../app/controllers/OnlyAdminEditController");
@@ -132,32 +133,26 @@ function autoFindResultKQXSMN() {
     };
 
     cron.schedule(
-        "* * * * * *",
-        (job) => {
-            console.log(123456);
-        },
-        {
-            timezone: "Asia/Ho_Chi_Minh", // Thay đổi nếu bạn ở múi giờ khác
-        }
-    );
-
-    cron.schedule(
         "*/1 16 * * *",
-        (job) => {
-            // Lấy thời gian hiện tại
-            const now = new Date();
-            const hours = now.getHours();
-            const minutes = now.getMinutes();
+        async (job) => {
+            try {
+                // Lấy thời gian hiện tại
+                const now = new Date();
+                const hours = now.getHours();
+                const minutes = now.getMinutes();
 
-            // const now1 = new Date("09-19-2024");
-            // const date = moment(now1).format("YYYY-MM-DD");
-            // const formattedDate = moment(now1).format("DD/MM/YYYY");
+                // const now1 = new Date("09-19-2024");
+                // const date = moment(now1).format("YYYY-MM-DD");
+                // const formattedDate = moment(now1).format("DD/MM/YYYY");
 
-            // payRevenue(date, formattedDate, 'mn');
+                // payRevenue(date, formattedDate, 'mn');
 
-            // Kiểm tra xem có phải trong khoảng thời gian từ 16h đến 18h40 không
-            if (hours === 16 && minutes <= 59) {
-                fetchLotteryResults();
+                // Kiểm tra xem có phải trong khoảng thời gian từ 16h đến 18h40 không
+                if (hours === 16 && minutes <= 59) {
+                    await fetchLotteryResults();
+                }
+            } catch (error) {
+                console.log(error);
             }
         },
         {
@@ -167,18 +162,22 @@ function autoFindResultKQXSMN() {
 
     cron.schedule(
         "*/5 16 * * *",
-        (job) => {
-            // Lấy thời gian hiện tại
-            const now = new Date();
-            const hours = now.getHours();
-            const minutes = now.getMinutes();
+        async (job) => {
+            try {
+                // Lấy thời gian hiện tại
+                const now = new Date();
+                const hours = now.getHours();
+                const minutes = now.getMinutes();
 
-            // Kiểm tra xem có phải trong khoảng thời gian từ 16h25 đến 17h không
-            if (
-                (hours === 16 && minutes >= 25) ||
-                (hours === 17 && minutes === 0)
-            ) {
-                paySms("mn");
+                // Kiểm tra xem có phải trong khoảng thời gian từ 16h25 đến 17h không
+                if (
+                    (hours === 16 && minutes >= 25) ||
+                    (hours === 17 && minutes === 0)
+                ) {
+                    await paySms("mn");
+                }
+            } catch (error) {
+                console.log(error);
             }
         },
         {
@@ -259,14 +258,18 @@ function autoFindResultKQXSMN() {
                                                 sms.idMember,
                                                 kqxs
                                             );
-                                        } else if (e.typePlay === "xiuchudau") {
+                                        } else if (
+                                            e.typePlay === "xiuchudau" ||
+                                            e.typePlay === "xiuchudaudao"
+                                        ) {
                                             pay = payXiuChuDau(
                                                 e,
                                                 sms.idMember,
                                                 kqxs
                                             );
                                         } else if (
-                                            e.typePlay === "xiuchuduoi"
+                                            e.typePlay === "xiuchuduoi" ||
+                                            e.typePlay === "xiuchuduoidao"
                                         ) {
                                             pay = payXiuChuDuoi(
                                                 e,
@@ -281,6 +284,12 @@ function autoFindResultKQXSMN() {
                                             );
                                         } else if (e.typePlay === "da(xien)") {
                                             pay = payDaXien(
+                                                e,
+                                                sms.idMember,
+                                                kqxs
+                                            );
+                                        } else if (e.typePlay === "baylo") {
+                                            pay = payBaylo(
                                                 e,
                                                 sms.idMember,
                                                 kqxs

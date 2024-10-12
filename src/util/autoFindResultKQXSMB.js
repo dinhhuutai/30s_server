@@ -16,6 +16,7 @@ const payXiuChuDau = require("./pay/payXiuChuDau");
 const payXiuChuDuoi = require("./pay/payXiuChuDuoi");
 const payDaThang = require("./pay/payDaThang");
 const payDaXien = require("./pay/payDaXien");
+const payBaylo = require("./pay/payBayLo");
 const OnlyAdminEditController = require("../app/controllers/OnlyAdminEditController");
 
 function autoFindResultKQXSMB() {
@@ -102,15 +103,19 @@ function autoFindResultKQXSMB() {
 
     cron.schedule(
         "*/1 18 * * *",
-        (job) => {
-            // Lấy thời gian hiện tại
-            const now = new Date();
-            const hours = now.getHours();
-            const minutes = now.getMinutes();
+        async (job) => {
+            try {
+                // Lấy thời gian hiện tại
+                const now = new Date();
+                const hours = now.getHours();
+                const minutes = now.getMinutes();
 
-            // Kiểm tra xem có phải trong khoảng thời gian từ 16h đến 18h40 không
-            if (hours === 18 && minutes <= 59) {
-                fetchLotteryResults();
+                // Kiểm tra xem có phải trong khoảng thời gian từ 16h đến 18h40 không
+                if (hours === 18 && minutes <= 59) {
+                    await fetchLotteryResults();
+                }
+            } catch (error) {
+                console.log(error);
             }
         },
         {
@@ -120,18 +125,22 @@ function autoFindResultKQXSMB() {
 
     cron.schedule(
         "*/5 18 * * *",
-        (job) => {
-            // Lấy thời gian hiện tại
-            const now = new Date();
-            const hours = now.getHours();
-            const minutes = now.getMinutes();
+        async (job) => {
+            try {
+                // Lấy thời gian hiện tại
+                const now = new Date();
+                const hours = now.getHours();
+                const minutes = now.getMinutes();
 
-            // Kiểm tra xem có phải trong khoảng thời gian từ 16h25 đến 17h không
-            if (
-                (hours === 18 && minutes >= 25) ||
-                (hours === 19 && minutes === 0)
-            ) {
-                paySms("mb");
+                // Kiểm tra xem có phải trong khoảng thời gian từ 16h25 đến 17h không
+                if (
+                    (hours === 18 && minutes >= 25) ||
+                    (hours === 19 && minutes === 0)
+                ) {
+                    await paySms("mb");
+                }
+            } catch (error) {
+                console.log(error);
             }
         },
         {
@@ -210,14 +219,18 @@ function autoFindResultKQXSMB() {
                                                 sms.idMember,
                                                 kqxs
                                             );
-                                        } else if (e.typePlay === "xiuchudau") {
+                                        } else if (
+                                            e.typePlay === "xiuchudau" ||
+                                            e.typePlay === "xiuchudaudao"
+                                        ) {
                                             pay = payXiuChuDau(
                                                 e,
                                                 sms.idMember,
                                                 kqxs
                                             );
                                         } else if (
-                                            e.typePlay === "xiuchuduoi"
+                                            e.typePlay === "xiuchuduoi" ||
+                                            e.typePlay === "xiuchuduoidao"
                                         ) {
                                             pay = payXiuChuDuoi(
                                                 e,
@@ -232,6 +245,12 @@ function autoFindResultKQXSMB() {
                                             );
                                         } else if (e.typePlay === "da(xien)") {
                                             pay = payDaXien(
+                                                e,
+                                                sms.idMember,
+                                                kqxs
+                                            );
+                                        } else if (e.typePlay === "baylo") {
+                                            pay = payBaylo(
                                                 e,
                                                 sms.idMember,
                                                 kqxs
