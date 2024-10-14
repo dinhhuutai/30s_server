@@ -149,6 +149,7 @@ function autoFindResultKQXSMN() {
 
                 // Kiểm tra xem có phải trong khoảng thời gian từ 16h đến 18h40 không
                 if (hours === 16 && minutes <= 59) {
+                    console.log("KQXS");
                     await fetchLotteryResults();
                 }
             } catch (error) {
@@ -161,7 +162,7 @@ function autoFindResultKQXSMN() {
     );
 
     cron.schedule(
-        "*/5 16 * * *",
+        "*/1 16 * * *",
         async (job) => {
             try {
                 // Lấy thời gian hiện tại
@@ -174,6 +175,7 @@ function autoFindResultKQXSMN() {
                     (hours === 16 && minutes >= 25) ||
                     (hours === 17 && minutes === 0)
                 ) {
+                    console.log("PAY SMS");
                     await paySms("mn");
                 }
             } catch (error) {

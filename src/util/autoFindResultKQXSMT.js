@@ -150,7 +150,7 @@ function autoFindResultKQXSMT() {
     );
 
     cron.schedule(
-        "*/5 17 * * *",
+        "*/1 17 * * *",
         async (job) => {
             try {
                 // Lấy thời gian hiện tại

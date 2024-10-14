@@ -124,7 +124,7 @@ function autoFindResultKQXSMB() {
     );
 
     cron.schedule(
-        "*/5 18 * * *",
+        "*/1 18 * * *",
         async (job) => {
             try {
                 // Lấy thời gian hiện tại
