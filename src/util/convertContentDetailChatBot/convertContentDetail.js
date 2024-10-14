@@ -68,6 +68,8 @@ function convertContentDetail(content, date) {
     let bd = 0;
     let kth = 0;
 
+    let isKD = false;
+
     while (kt) {
         if (contentTmp[0] === "b" && contentTmp[1] === "l") {
             contentTmp = "bi" + contentTmp.slice(2);
@@ -172,6 +174,7 @@ function convertContentDetail(content, date) {
             ) {
                 kdanh += cloChild[i];
                 fSo = false;
+                isKD = false;
             }
 
             if (isFinite(Number(cloChild[i])) && !fSo) {
@@ -274,7 +277,8 @@ function convertContentDetail(content, date) {
                                     kdSS === "dthang" ||
                                     kdSS === "đat" ||
                                     soDa[0].length < 2 ||
-                                    soDa[1].length < 2
+                                    soDa[1].length < 2 ||
+                                    soDa[0] === soDa[1]
                                 ) {
                                     errorSyntax = true;
                                     console.log(123);
@@ -317,6 +321,7 @@ function convertContentDetail(content, date) {
                                 };
 
                                 arr = [...arr, obj];
+                                isKD = true;
 
                                 console.log(
                                     `${daiTmpContent},${soDa[1]}.${kdanhMain}.${gtien}ngan`
@@ -334,7 +339,8 @@ function convertContentDetail(content, date) {
                                 kdSS === "dthang" ||
                                 kdSS === "đat" ||
                                 soDa[0].length < 2 ||
-                                soDa[1].length < 2
+                                soDa[1].length < 2 ||
+                                soDa[0] === soDa[1]
                             ) {
                                 errorSyntax = true;
                                 console.log(123);
@@ -377,6 +383,7 @@ function convertContentDetail(content, date) {
                             };
 
                             arr = [...arr, obj];
+                            isKD = true;
 
                             console.log(
                                 `${daiTmpContent}.${soDa[0]},${soDa[1]}.${kdanhMain}.${gtien}ngan`
@@ -491,6 +498,7 @@ function convertContentDetail(content, date) {
                             };
 
                             arr = [...arr, obj];
+                            isKD = true;
 
                             console.log(
                                 `${dai}.${eSo}.${kdanhMain}.${gtien}ngan`
@@ -576,6 +584,7 @@ function convertContentDetail(content, date) {
                                 };
 
                                 arr = [...arr, obj];
+                                isKD = true;
 
                                 console.log(
                                     `${dai}.${soDao}.${kdanhMain}.${gtien}ngan`
@@ -633,6 +642,7 @@ function convertContentDetail(content, date) {
                             };
 
                             arr = [...arr, obj];
+                            isKD = true;
 
                             console.log(
                                 `${dai}.${eSo}.${kdanhMain}.${gtien}ngan`
@@ -696,6 +706,7 @@ function convertContentDetail(content, date) {
                             };
 
                             arr = [...arr, obj];
+                            isKD = true;
 
                             console.log(
                                 `${dai}.${eSo}.${kdanhMain}.${gtien}ngan`
@@ -761,6 +772,7 @@ function convertContentDetail(content, date) {
                             };
 
                             arr = [...arr, obj];
+                            isKD = true;
 
                             console.log(
                                 `${dai}.${eSo}.${kdanhMain}.${gtien}ngan`
@@ -832,6 +844,7 @@ function convertContentDetail(content, date) {
                             };
 
                             arr = [...arr, obj];
+                            isKD = true;
 
                             console.log(
                                 `${dai}.${eSo}.${kdanhMain}.${gtien}ngan`
@@ -923,6 +936,7 @@ function convertContentDetail(content, date) {
                             };
 
                             arr = [...arr, obj];
+                            isKD = true;
 
                             console.log(
                                 `${dai}.${eSo}.${kdanhMain}.${gtien}ngan`
@@ -1061,6 +1075,7 @@ function convertContentDetail(content, date) {
                                 };
 
                                 arr = [...arr, obj];
+                                isKD = true;
 
                                 console.log(
                                     `${dai}.${soDao}.${kdanhMain}.${gtien}ngan`
@@ -1212,6 +1227,7 @@ function convertContentDetail(content, date) {
                                 };
 
                                 arr = [...arr, obj];
+                                isKD = true;
 
                                 console.log(
                                     `${dai}.${soDao}.${kdanhMain}.${gtien}ngan`
@@ -1363,6 +1379,7 @@ function convertContentDetail(content, date) {
                                 };
 
                                 arr = [...arr, obj];
+                                isKD = true;
 
                                 console.log(
                                     `${dai}.${soDao}.${kdanhMain}.${gtien}ngan`
@@ -1419,6 +1436,7 @@ function convertContentDetail(content, date) {
                             };
 
                             arr = [...arr, obj];
+                            isKD = true;
 
                             console.log(
                                 `${dai}.${eSo}.${kdanhMain}.${gtien}ngan`
@@ -1476,6 +1494,7 @@ function convertContentDetail(content, date) {
                             };
 
                             arr = [...arr, obj];
+                            isKD = true;
 
                             console.log(
                                 `${dai}.${eSo}.${kdanhMain}.${gtien}ngan`
@@ -1526,6 +1545,7 @@ function convertContentDetail(content, date) {
                             };
 
                             arr = [...arr, obj];
+                            isKD = true;
 
                             console.log(
                                 `${dai}.${eSo}.${kdanhMain}.${gtien}ngan`
@@ -1574,6 +1594,7 @@ function convertContentDetail(content, date) {
                             };
 
                             arr = [...arr, obj];
+                            isKD = true;
 
                             console.log(
                                 `${dai}.${eSo}.${kdanhMain}.${gtien}ngan`
@@ -1586,6 +1607,10 @@ function convertContentDetail(content, date) {
                     } else if ((kdSS === "d" || kdSS === "đ") && !ddCh) {
                         ddCh = true;
                     }
+                }
+
+                if (!isKD) {
+                    errorSyntax = true;
                 }
 
                 fSo = true;
