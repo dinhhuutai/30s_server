@@ -356,7 +356,10 @@ function autoFindResultKQXSMN() {
                             domain
                         );
 
-                    // console.log(resRevenue.revenue);
+                    console.log(
+                        "resRevenue111111111111111111111111111: ",
+                        resRevenue.revenue
+                    );
 
                     if (resRevenue.revenue.length < 1) {
                         let diem2con = 0;

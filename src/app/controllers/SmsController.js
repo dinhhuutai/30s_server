@@ -315,7 +315,7 @@ class SmsController {
 
             console.log("dayStart: ", dayStart);
             console.log("dayEnd: ", dayEnd);
-            console.log("resultDateSMS: ", req.query.date);
+            console.log("resultDateSMS: ", date);
 
             const sms = await Sms.find({
                 idMember,
