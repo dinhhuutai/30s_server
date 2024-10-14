@@ -9,7 +9,7 @@ const generateAccessToken = (user) => {
             id: user._id,
         },
         process.env.ACCESS_TOKEN_SECRET,
-        { expiresIn: "30d" }
+        { expiresIn: "1d" }
     );
 };
 const generateRefreshToken = (user) => {
