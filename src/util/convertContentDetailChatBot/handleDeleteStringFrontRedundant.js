@@ -3,71 +3,84 @@ function handleDeleteStringFrontRedundant(content) {
     let length = contentTmp.length;
 
     const searchChars = [
-        '2d',
-        '2đ',
-        '3d',
-        '3đ',
-        '4d',
-        '4đ',
-        'dc',
-        'dp',
-        'dt',
-        'tp',
-        'cm',
-        'br',
-        'vt',
-        'bi',
-        'dn',
-        'ct',
-        'st',
-        'tn',
-        'ag',
-        'bt',
-        'bu',
-        'vl',
-        'tv',
-        'la',
-        'bp',
-        'hg',
-        'tg',
-        'kg',
-        'lt',
-        'py',
-        'hu',
-        'dl',
-        'qn',
-        'dg',
-        'kh',
-        'qb',
-        'bd',
-        'qt',
-        'gl',
-        'nt',
-        'qg',
-        'do',
-        'kt',
-        'mb',
-        'bl',
+        "2d",
+        "2đ",
+        "3d",
+        "3đ",
+        "4d",
+        "4đ",
+        "dc",
+        "dp",
+        "dt",
+        "tp",
+        "cm",
+        "br",
+        "vt",
+        "bi",
+        "dn",
+        "ct",
+        "st",
+        "tn",
+        "ag",
+        "bt",
+        "bu",
+        "vl",
+        "tv",
+        "la",
+        "bp",
+        "hg",
+        "tg",
+        "kg",
+        "lt",
+        "py",
+        "hu",
+        "dl",
+        "qn",
+        "dg",
+        "kh",
+        "qb",
+        "bd",
+        "qt",
+        "gl",
+        "nt",
+        "qg",
+        "do",
+        "kt",
+        "mb",
+        "bl",
     ];
 
-    let stringRedun = '';
+    let stringRedun = "";
+    let countDelete = 0;
+    let errorSyntax = false;
 
     for (let i = 0; i < length; i++) {
-        if (contentTmp[i] !== '.' && !(isFinite(Number(contentTmp[i])) && isFinite(Number(contentTmp[i + 1])))) {
+        if (
+            contentTmp[i] !== "." &&
+            !(
+                isFinite(Number(contentTmp[i])) &&
+                isFinite(Number(contentTmp[i + 1]))
+            )
+        ) {
             stringRedun += contentTmp[i];
         } else {
             if (searchChars.includes(stringRedun)) {
                 break;
             } else {
                 contentTmp = contentTmp.slice(i + 1);
-                stringRedun = '';
+                stringRedun = "";
                 length = contentTmp.length;
                 i = -1;
             }
         }
+        countDelete++;
     }
 
-    return contentTmp;
+    if (countDelete >= 4) {
+        errorSyntax = true;
+    }
+
+    return { data3: contentTmp, data4: errorSyntax };
 }
 
 module.exports = handleDeleteStringFrontRedundant;
