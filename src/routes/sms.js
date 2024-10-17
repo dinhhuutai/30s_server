@@ -9,6 +9,7 @@ router.post("/findSmsByNameAndPhone/:idUser", SmsController.findSmsByNameAndPhon
 router.post("/findSmsDeleted/:idUser", SmsController.findSmsDeleted);
 router.post("/restoreSmsAll", SmsController.restoreSmsAll);
 router.post("/findSmsByStatus", SmsController.findSmsByStatus);
+router.post("/findSmsByStatus2", SmsController.findSmsByStatus2);
 router.post("/delete", SmsController.delete);
 router.post("/update/:id", SmsController.update);
 router.post("/findSmsByIdMember", SmsController.findSmsByIdMember);

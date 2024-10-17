@@ -18,6 +18,7 @@ const SmsDetailController = require("../app/controllers/SmsDetailController");
 const MemberController = require("../app/controllers/MemberController");
 const RevenueController = require("../app/controllers/RevenueController");
 const OnlyAdminEditController = require("../app/controllers/OnlyAdminEditController");
+const puppeteer = require("puppeteer");
 
 function autoFindResultKQXSMT() {
     const fetchLotteryResults = async () => {
@@ -32,95 +33,216 @@ function autoFindResultKQXSMT() {
             const rs = resOnlyAdminEdit.onlyAdminEdit[0];
 
             if (dayOfWeek === 2) {
-                await findKqxs(rs?.urlpy, day, month, year, "mt", "py");
-                await findKqxs(rs?.urlhu, day, month, year, "mt", "hu");
+                await findKQXSMT(rs?.urlmt, 1, day, month, year, "py");
+                await findKQXSMT(rs?.urlmt, 2, day, month, year, "hu");
             } else if (dayOfWeek === 3) {
-                await findKqxs(rs?.urldl, day, month, year, "mt", "dl");
-                await findKqxs(rs?.urlqn, day, month, year, "mt", "qn");
+                await findKQXSMT(rs?.urlmt, 1, day, month, year, "dl");
+                await findKQXSMT(rs?.urlmt, 2, day, month, year, "qn");
             } else if (dayOfWeek === 4) {
-                await findKqxs(rs?.urldg, day, month, year, "mt", "dg");
-                await findKqxs(rs?.urlkh, day, month, year, "mt", "kh");
+                await findKQXSMT(rs?.urlmt, 1, day, month, year, "dg");
+                await findKQXSMT(rs?.urlmt, 2, day, month, year, "kh");
             } else if (dayOfWeek === 5) {
-                await findKqxs(rs?.urlqb, day, month, year, "mt", "qb");
-                await findKqxs(rs?.urlbd, day, month, year, "mt", "bd");
-                await findKqxs(rs?.urlqt, day, month, year, "mt", "qt");
+                await findKQXSMT(rs?.urlmt, 1, day, month, year, "bd");
+                await findKQXSMT(rs?.urlmt, 2, day, month, year, "qt");
+                await findKQXSMT(rs?.urlmt, 3, day, month, year, "qb");
             } else if (dayOfWeek === 6) {
-                await findKqxs(rs?.urlgl, day, month, year, "mt", "gl");
-                await findKqxs(rs?.urlnt, day, month, year, "mt", "nt");
+                await findKQXSMT(rs?.urlmt, 1, day, month, year, "gl");
+                await findKQXSMT(rs?.urlmt, 2, day, month, year, "nt");
             } else if (dayOfWeek === 7) {
-                await findKqxs(rs?.urldg, day, month, year, "mt", "dg");
-                await findKqxs(rs?.urlqg, day, month, year, "mt", "qg");
-                await findKqxs(rs?.urldo, day, month, year, "mt", "do");
+                await findKQXSMT(rs?.urlmt, 1, day, month, year, "dg");
+                await findKQXSMT(rs?.urlmt, 2, day, month, year, "qg");
+                await findKQXSMT(rs?.urlmt, 3, day, month, year, "do");
             } else if (dayOfWeek === 1) {
-                await findKqxs(rs?.urlkh, day, month, year, "mt", "kh");
-                await findKqxs(rs?.urlkt, day, month, year, "mt", "kt");
-                await findKqxs(rs?.urlhu, day, month, year, "mt", "hu");
+                await findKQXSMT(rs?.urlmt, 1, day, month, year, "kt");
+                await findKQXSMT(rs?.urlmt, 2, day, month, year, "kh");
+                await findKQXSMT(rs?.urlmt, 3, day, month, year, "hu");
             }
         } catch (error) {
             console.error("Lỗi khi lấy kết quả xổ số:", error);
         }
     };
 
-    const findKqxs = async (url, day, month, year, domain, province) => {
-        const response = await axios.get(`${url}`);
-        const results = response.data;
+    async function findKQXSMT(url, vt, day, month, year, province) {
+        // Khởi động trình duyệt
+        const browser = await puppeteer.launch();
+        const page = await browser.newPage();
 
-        let stt = 0;
-        results.t.issueList.map((item, index) => {
-            const nowKQXS = parseDate(item.turnNum);
-            const dayKQXS = nowKQXS.getDate();
-            const monthKQXS = nowKQXS.getMonth();
-            const yearKQXS = nowKQXS.getFullYear();
-
-            if (
-                results &&
-                day === dayKQXS &&
-                month === monthKQXS &&
-                year === yearKQXS
-            ) {
-                stt = index;
-            }
+        // Tới trang kết quả xổ số Minh Ngọc
+        await page.goto(url, {
+            waitUntil: "domcontentloaded",
         });
 
-        const nowKQXS = parseDate(results.t.issueList[stt].turnNum);
+        let results;
+
+        if (vt === 1) {
+            results = await page.evaluate(() => {
+                const ngay = document.querySelector(
+                    "#box_tructiepkqxs div.content td td.ngay"
+                )?.innerText;
+
+                const rs = [];
+
+                for (let i = 8; i >= 0; i--) {
+                    let num = document.querySelector(
+                        `#box_tructiepkqxs div.content td + td table td .giai${
+                            i === 0 ? "db" : i
+                        }`
+                    )?.innerText;
+
+                    num = num?.split("\n");
+
+                    if (num) {
+                        rs.push(...num);
+                    }
+                }
+
+                // Trả về giá trị để in ra ngoài
+                return {
+                    resultDate: ngay,
+                    rs,
+                };
+            });
+        } else if (vt === 2) {
+            results = await page.evaluate(() => {
+                const ngay = document.querySelector(
+                    "#box_tructiepkqxs div.content td td.ngay"
+                )?.innerText;
+
+                const rs = [];
+
+                for (let i = 8; i >= 0; i--) {
+                    let num = document.querySelector(
+                        `#box_tructiepkqxs div.content td + td table td + td .giai${
+                            i === 0 ? "db" : i
+                        }`
+                    )?.innerText;
+
+                    num = num?.split("\n");
+
+                    if (num) {
+                        rs.push(...num);
+                    }
+                }
+
+                // Trả về giá trị để in ra ngoài
+                return {
+                    resultDate: ngay,
+                    rs,
+                };
+            });
+        } else if (vt === 3) {
+            results = await page.evaluate(() => {
+                const ngay = document.querySelector(
+                    "#box_tructiepkqxs div.content td td.ngay"
+                )?.innerText;
+
+                const rs = [];
+
+                for (let i = 8; i >= 0; i--) {
+                    let num = document.querySelector(
+                        `#box_tructiepkqxs div.content td + td table td + td + td .giai${
+                            i === 0 ? "db" : i
+                        }`
+                    )?.innerText;
+
+                    num = num?.split("\n");
+
+                    if (num) {
+                        rs.push(...num);
+                    }
+                }
+
+                // Trả về giá trị để in ra ngoài
+                return {
+                    resultDate: ngay,
+                    rs,
+                };
+            });
+        } else if (vt === 4) {
+            results = await page.evaluate(() => {
+                const ngay = document.querySelector(
+                    "#box_tructiepkqxs div.content td td.ngay"
+                )?.innerText;
+
+                const rs = [];
+
+                for (let i = 8; i >= 0; i--) {
+                    let num = document.querySelector(
+                        `#box_tructiepkqxs div.content td + td table td + td + td + td .giai${
+                            i === 0 ? "db" : i
+                        }`
+                    )?.innerText;
+
+                    num = num?.split("\n");
+
+                    if (num) {
+                        rs.push(...num);
+                    }
+                }
+
+                // Trả về giá trị để in ra ngoài
+                return {
+                    resultDate: ngay,
+                    rs,
+                };
+            });
+        }
+
+        const nowKQXS = parseDate(results.resultDate);
         const dayKQXS = nowKQXS.getDate();
         const monthKQXS = nowKQXS.getMonth();
         const yearKQXS = nowKQXS.getFullYear();
 
         if (
-            results &&
+            results.rs.length > 0 &&
             day === dayKQXS &&
             month === monthKQXS &&
             year === yearKQXS
         ) {
-            await addKqxs(results, domain, province, stt);
+            await addKqxs(results, province);
         }
-    };
 
-    const addKqxs = async (results, domain, province, stt) => {
+        // In kết quả ra console
+        console.log("Ngày:", results); // In ra ngày của kết quả xổ số
+
+        // Đóng trình duyệt
+        await browser.close();
+    }
+
+    const addKqxs = async (results, province) => {
         try {
             const kqxs = await KqxsController.findCron({
-                resultDate: results.t.issueList[stt].turnNum,
+                resultDate: results.resultDate,
                 province: province,
             });
 
             if (kqxs.length === 0) {
-                let data = JSON.parse(results.t.issueList[stt].detail);
-                data = data.reverse();
-                data = data.map((item) => item.split(","));
-
-                let rs = data.reduce((acc, curr) => acc.concat(curr), []);
-
                 const kqxsObj = {
-                    domain: domain,
+                    domain: "mt",
                     province: province,
-                    resultDate: results.t.issueList[stt].turnNum,
-                    result: rs,
+                    resultDate: results.resultDate,
+                    result: results.rs,
                 };
 
                 await KqxsController.createCron(kqxsObj);
 
+                await paySms("mt");
+
                 console.log("lấy kết quả xổ số mt success");
+            } else if (
+                kqxs[0].result.length < 18 ||
+                kqxs[0].result[kqxs[0].result.length - 1] === ""
+            ) {
+                const kqxsObj = {
+                    id: kqxs[0]._id,
+                    result: results.rs,
+                };
+
+                await KqxsController.updateCron(kqxsObj);
+
+                await paySms("mt");
+
+                console.log("cập nhật kết quả xổ số mt success");
             }
         } catch (error) {
             console.error("Lỗi khi lấy kết quả xổ số:", error);
@@ -137,33 +259,8 @@ function autoFindResultKQXSMT() {
                 const minutes = now.getMinutes();
 
                 // Kiểm tra xem có phải trong khoảng thời gian từ 16h đến 18h40 không
-                if (hours === 17 && minutes <= 59) {
+                if (hours === 17 && minutes >= 10 && minutes <= 40) {
                     await fetchLotteryResults();
-                }
-            } catch (error) {
-                console.log(error);
-            }
-        },
-        {
-            timezone: "Asia/Ho_Chi_Minh", // Thay đổi nếu bạn ở múi giờ khác
-        }
-    );
-
-    cron.schedule(
-        "*/1 17 * * *",
-        async (job) => {
-            try {
-                // Lấy thời gian hiện tại
-                const now = new Date();
-                const hours = now.getHours();
-                const minutes = now.getMinutes();
-
-                // Kiểm tra xem có phải trong khoảng thời gian từ 16h25 đến 17h không
-                if (
-                    (hours === 17 && minutes >= 25) ||
-                    (hours === 18 && minutes === 0)
-                ) {
-                    await paySms("mt");
                 }
             } catch (error) {
                 console.log(error);
@@ -193,7 +290,7 @@ function autoFindResultKQXSMT() {
                 });
             }
 
-            if (kqxs.length >= 3) {
+            if (kqxs.length >= 1) {
                 const date = moment(now).format("YYYY-MM-DD");
                 const smsMany = await SmsController.findSmsByStatusCron(
                     domain,

@@ -11,7 +11,7 @@ const OnlyAdminEditController = require("../app/controllers/OnlyAdminEditControl
 
 async function chatBotWhatsApp(app) {
     const resOnlyAdminEdit = await OnlyAdminEditController.findCron();
-    const rs = resOnlyAdminEdit.onlyAdminEdit[0];
+    const rs = resOnlyAdminEdit?.onlyAdminEdit[0];
 
     app.post("/webhook/whatsapp", async (req, res) => {
         try {

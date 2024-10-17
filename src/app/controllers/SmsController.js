@@ -275,6 +275,34 @@ class SmsController {
             console.log(error);
         }
     }
+    
+    async findSmsByStatus2(req, res, next) {
+        try {
+            const dayStart = new Date(req.query.date);
+            const dayEnd = new Date(req.query.date);
+            dayStart.setUTCHours(0, 0, 0, 0);
+            dayEnd.setDate(dayEnd.getDate() + 1);
+            dayEnd.setUTCHours(0, 0, 0, 0);
+
+            console.log("dayStart: ", dayStart);
+            console.log("dayEnd: ", dayEnd);
+            console.log("resultDateSMS: ", req.query.date);
+
+            const sms = await Sms.find({
+                statusSms: { $in: ["Đang xử lý", "Đã xử lý", "Đã xổ"] },
+                domain: req.body.domain,
+                resultDate: { $gte: dayStart, $lt: dayEnd },
+                deleted: false,
+            }).populate("idMember");
+
+            return res.status(200).json({
+                success: true,
+                sms,
+            });
+        } catch (error) {
+            console.log(error);
+        }
+    }
 
     async findSmsByStatus(req, res, next) {
         try {

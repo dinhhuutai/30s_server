@@ -18,6 +18,7 @@ const payDaThang = require("./pay/payDaThang");
 const payDaXien = require("./pay/payDaXien");
 const payBaylo = require("./pay/payBayLo");
 const OnlyAdminEditController = require("../app/controllers/OnlyAdminEditController");
+const puppeteer = require("puppeteer");
 
 function autoFindResultKQXSMB() {
     const fetchLotteryResults = async () => {
@@ -30,71 +31,107 @@ function autoFindResultKQXSMB() {
             const resOnlyAdminEdit = await OnlyAdminEditController.findCron();
             const rs = resOnlyAdminEdit.onlyAdminEdit[0];
 
-            const response = await axios.get(`${rs?.urlmb}`);
-            const results = response.data;
-
-            let stt = 0;
-            results.t.issueList.map((item, index) => {
-                const nowKQXS = parseDate(item.turnNum);
-                const dayKQXS = nowKQXS.getDate();
-                const monthKQXS = nowKQXS.getMonth();
-                const yearKQXS = nowKQXS.getFullYear();
-
-                if (
-                    results &&
-                    day === dayKQXS &&
-                    month === monthKQXS &&
-                    year === yearKQXS
-                ) {
-                    stt = index;
-                }
-            });
-
-            const nowKQXS = parseDate(results.t.issueList[stt].turnNum);
-
-            const dayKQXS = nowKQXS.getDate();
-            const monthKQXS = nowKQXS.getMonth();
-            const yearKQXS = nowKQXS.getFullYear();
-
-            if (
-                results &&
-                day === dayKQXS &&
-                month === monthKQXS &&
-                year === yearKQXS
-            ) {
-                await addKqxs(results, "mb", "mb", stt);
-            }
+            await findKQXSMB(rs?.urlmb, day, month, year, "mb");
         } catch (error) {
             console.error("Lỗi khi lấy kết quả xổ số:", error);
         }
     };
 
-    const addKqxs = async (results, domain, province, stt) => {
+    async function findKQXSMB(url, day, month, year, province) {
+        // Khởi động trình duyệt
+        const browser = await puppeteer.launch();
+        const page = await browser.newPage();
+
+        // Tới trang kết quả xổ số Minh Ngọc
+        await page.goto(url, {
+            waitUntil: "domcontentloaded",
+        });
+
+        const results = await page.evaluate(() => {
+            let ngay = document.querySelector(
+                "#box_tructiepkqxs td.ngay span"
+            )?.innerText;
+
+            ngay = ngay.slice(6);
+
+            const rs = [];
+
+            for (let i = 1; i <= 8; i++) {
+                let num = document.querySelector(
+                    `#box_tructiepkqxs div.content tr tbody td.giai${
+                        i === 8 ? "db" : i
+                    }`
+                )?.innerText;
+
+                num = num?.split("\n");
+
+                if (num) {
+                    rs.push(...num);
+                }
+            }
+
+            // Trả về giá trị để in ra ngoài
+            return {
+                resultDate: ngay,
+                rs,
+            };
+        });
+
+        const nowKQXS = parseDate(results.resultDate);
+        const dayKQXS = nowKQXS.getDate();
+        const monthKQXS = nowKQXS.getMonth();
+        const yearKQXS = nowKQXS.getFullYear();
+
+        if (
+            results.rs.length > 0 &&
+            day === dayKQXS &&
+            month === monthKQXS &&
+            year === yearKQXS
+        ) {
+            await addKqxs(results, province);
+        }
+
+        // In kết quả ra console
+        console.log("Ngày:", results); // In ra ngày của kết quả xổ số
+
+        // Đóng trình duyệt
+        await browser.close();
+    }
+
+    const addKqxs = async (results, province) => {
         try {
             const kqxs = await KqxsController.findCron({
-                resultDate: results.t.issueList[stt].turnNum,
+                resultDate: results.resultDate,
                 province: province,
             });
 
             if (kqxs.length === 0) {
-                let data = JSON.parse(results.t.issueList[stt].detail);
-                data = data.map((item) => item.split(","));
-
-                let rs = data.reduce((acc, curr) => acc.concat(curr), []);
-
-                const firstElement = rs.shift();
-                rs.push(firstElement);
-
                 const kqxsObj = {
-                    domain: domain,
+                    domain: "mb",
                     province: province,
-                    resultDate: results.t.issueList[stt].turnNum,
-                    result: rs,
+                    resultDate: results.resultDate,
+                    result: results.rs,
                 };
 
                 await KqxsController.createCron(kqxsObj);
 
+                await paySms("mb");
+
                 console.log("lấy kết quả xổ số mb success");
+            } else if (
+                kqxs[0].result.length < 27 ||
+                kqxs[0].result[kqxs[0].result.length - 1] === ""
+            ) {
+                const kqxsObj = {
+                    id: kqxs[0]._id,
+                    result: results.rs,
+                };
+
+                await KqxsController.updateCron(kqxsObj);
+
+                await paySms("mb");
+
+                console.log("cập nhật kết quả xổ số mb success");
             }
         } catch (error) {
             console.error("Lỗi khi lấy kết quả xổ số:", error);
@@ -111,33 +148,8 @@ function autoFindResultKQXSMB() {
                 const minutes = now.getMinutes();
 
                 // Kiểm tra xem có phải trong khoảng thời gian từ 16h đến 18h40 không
-                if (hours === 18 && minutes <= 59) {
+                if (hours === 18 && minutes >= 10 && minutes <= 40) {
                     await fetchLotteryResults();
-                }
-            } catch (error) {
-                console.log(error);
-            }
-        },
-        {
-            timezone: "Asia/Ho_Chi_Minh", // Thay đổi nếu bạn ở múi giờ khác
-        }
-    );
-
-    cron.schedule(
-        "*/1 18 * * *",
-        async (job) => {
-            try {
-                // Lấy thời gian hiện tại
-                const now = new Date();
-                const hours = now.getHours();
-                const minutes = now.getMinutes();
-
-                // Kiểm tra xem có phải trong khoảng thời gian từ 16h25 đến 17h không
-                if (
-                    (hours === 18 && minutes >= 25) ||
-                    (hours === 19 && minutes === 0)
-                ) {
-                    await paySms("mb");
                 }
             } catch (error) {
                 console.log(error);
@@ -167,7 +179,7 @@ function autoFindResultKQXSMB() {
                 });
             }
 
-            if (kqxs.length >= 3) {
+            if (kqxs.length >= 1) {
                 const date = moment(now).format("YYYY-MM-DD");
                 const smsMany = await SmsController.findSmsByStatusCron(
                     domain,

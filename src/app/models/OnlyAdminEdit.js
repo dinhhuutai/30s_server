@@ -112,6 +112,12 @@ const OnlyAdminEditSchema = new Schema({
     urlkt: {
         type: String,
     },
+    urlmn: {
+        type: String,
+    },
+    urlmt: {
+        type: String,
+    },
     urlmb: {
         type: String,
     },

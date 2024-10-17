@@ -18,6 +18,7 @@ const payBaylo = require("./pay/payBayLo");
 const MemberController = require("../app/controllers/MemberController");
 const RevenueController = require("../app/controllers/RevenueController");
 const OnlyAdminEditController = require("../app/controllers/OnlyAdminEditController");
+const puppeteer = require("puppeteer");
 
 function autoFindResultKQXSMN() {
     const fetchLotteryResults = async () => {
@@ -32,100 +33,221 @@ function autoFindResultKQXSMN() {
             const rs = resOnlyAdminEdit.onlyAdminEdit[0];
 
             if (dayOfWeek === 2) {
-                await findKqxs(rs?.urltp, day, month, year, "mn", "tp");
-                await findKqxs(rs?.urldt, day, month, year, "mn", "dt");
-                await findKqxs(rs?.urlcm, day, month, year, "mn", "cm");
+                await findKQXSMN(rs?.urlmn, 1, day, month, year, "tp");
+                await findKQXSMN(rs?.urlmn, 2, day, month, year, "dt");
+                await findKQXSMN(rs?.urlmn, 3, day, month, year, "cm");
             } else if (dayOfWeek === 3) {
-                await findKqxs(rs?.urlbr, day, month, year, "mn", "br");
-                await findKqxs(rs?.urlvt, day, month, year, "mn", "vt");
-                await findKqxs(rs?.urlbi, day, month, year, "mn", "bi");
+                await findKQXSMN(rs?.urlmn, 1, day, month, year, "br");
+                await findKQXSMN(rs?.urlmn, 2, day, month, year, "vt");
+                await findKQXSMN(rs?.urlmn, 3, day, month, year, "bi");
             } else if (dayOfWeek === 4) {
-                await findKqxs(rs?.urldn, day, month, year, "mn", "dn");
-                await findKqxs(rs?.urlct, day, month, year, "mn", "ct");
-                await findKqxs(rs?.urlst, day, month, year, "mn", "st");
+                await findKQXSMN(rs?.urlmn, 1, day, month, year, "dn");
+                await findKQXSMN(rs?.urlmn, 2, day, month, year, "ct");
+                await findKQXSMN(rs?.urlmn, 3, day, month, year, "st");
             } else if (dayOfWeek === 5) {
-                await findKqxs(rs?.urltn, day, month, year, "mn", "tn");
-                await findKqxs(rs?.urlag, day, month, year, "mn", "ag");
-                await findKqxs(rs?.urlbt, day, month, year, "mn", "bt");
+                await findKQXSMN(rs?.urlmn, 1, day, month, year, "tn");
+                await findKQXSMN(rs?.urlmn, 2, day, month, year, "ag");
+                await findKQXSMN(rs?.urlmn, 3, day, month, year, "bt");
             } else if (dayOfWeek === 6) {
-                await findKqxs(rs?.urlbu, day, month, year, "mn", "bu");
-                await findKqxs(rs?.urlvl, day, month, year, "mn", "vl");
-                await findKqxs(rs?.urltv, day, month, year, "mn", "tv");
+                await findKQXSMN(rs?.urlmn, 1, day, month, year, "vl");
+                await findKQXSMN(rs?.urlmn, 2, day, month, year, "bu");
+                await findKQXSMN(rs?.urlmn, 3, day, month, year, "tv");
             } else if (dayOfWeek === 7) {
-                await findKqxs(rs?.urltp, day, month, year, "mn", "tp");
-                await findKqxs(rs?.urlla, day, month, year, "mn", "la");
-                await findKqxs(rs?.urlbp, day, month, year, "mn", "bp");
-                await findKqxs(rs?.urlhg, day, month, year, "mn", "hg");
+                await findKQXSMN(rs?.urlmn, 1, day, month, year, "tp");
+                await findKQXSMN(rs?.urlmn, 2, day, month, year, "la");
+                await findKQXSMN(rs?.urlmn, 3, day, month, year, "bp");
+                await findKQXSMN(rs?.urlmn, 4, day, month, year, "hg");
             } else if (dayOfWeek === 1) {
-                await findKqxs(rs?.urltg, day, month, year, "mn", "tg");
-                await findKqxs(rs?.urlkg, day, month, year, "mn", "kg");
-                await findKqxs(rs?.urllt, day, month, year, "mn", "lt");
+                await findKQXSMN(rs?.urlmn, 1, day, month, year, "tg");
+                await findKQXSMN(rs?.urlmn, 2, day, month, year, "kg");
+                await findKQXSMN(rs?.urlmn, 3, day, month, year, "lt");
             }
         } catch (error) {
             console.error("Lỗi khi lấy kết quả xổ số:", error);
         }
     };
 
-    const findKqxs = async (url, day, month, year, domain, province) => {
-        const response = await axios.get(`${url}`);
-        const results = response.data;
+    async function findKQXSMN(url, vt, day, month, year, province) {
+        // Khởi động trình duyệt
+        const browser = await puppeteer.launch();
+        const page = await browser.newPage();
 
-        let stt = 0;
-        results.t.issueList.map((item, index) => {
-            const nowKQXS = parseDate(item.turnNum);
-            const dayKQXS = nowKQXS.getDate();
-            const monthKQXS = nowKQXS.getMonth();
-            const yearKQXS = nowKQXS.getFullYear();
-
-            if (
-                results &&
-                day === dayKQXS &&
-                month === monthKQXS &&
-                year === yearKQXS
-            ) {
-                stt = index;
-            }
+        // Tới trang kết quả xổ số Minh Ngọc
+        await page.goto(url, {
+            waitUntil: "domcontentloaded",
         });
 
-        const nowKQXS = parseDate(results.t.issueList[stt].turnNum);
+        let results;
+
+        if (vt === 1) {
+            results = await page.evaluate(() => {
+                const ngay = document.querySelector(
+                    "#box_tructiepkqxs div.content td td.ngay"
+                )?.innerText;
+
+                const rs = [];
+
+                for (let i = 8; i >= 0; i--) {
+                    let num = document.querySelector(
+                        `#box_tructiepkqxs div.content td + td table td .giai${
+                            i === 0 ? "db" : i
+                        }`
+                    )?.innerText;
+
+                    num = num?.split("\n");
+
+                    if (num) {
+                        rs.push(...num);
+                    }
+                }
+
+                // Trả về giá trị để in ra ngoài
+                return {
+                    resultDate: ngay,
+                    rs,
+                };
+            });
+        } else if (vt === 2) {
+            results = await page.evaluate(() => {
+                const ngay = document.querySelector(
+                    "#box_tructiepkqxs div.content td td.ngay"
+                )?.innerText;
+
+                const rs = [];
+
+                for (let i = 8; i >= 0; i--) {
+                    let num = document.querySelector(
+                        `#box_tructiepkqxs div.content td + td table td + td .giai${
+                            i === 0 ? "db" : i
+                        }`
+                    )?.innerText;
+
+                    num = num?.split("\n");
+
+                    if (num) {
+                        rs.push(...num);
+                    }
+                }
+
+                // Trả về giá trị để in ra ngoài
+                return {
+                    resultDate: ngay,
+                    rs,
+                };
+            });
+        } else if (vt === 3) {
+            results = await page.evaluate(() => {
+                const ngay = document.querySelector(
+                    "#box_tructiepkqxs div.content td td.ngay"
+                )?.innerText;
+
+                const rs = [];
+
+                for (let i = 8; i >= 0; i--) {
+                    let num = document.querySelector(
+                        `#box_tructiepkqxs div.content td + td table td + td + td .giai${
+                            i === 0 ? "db" : i
+                        }`
+                    )?.innerText;
+
+                    num = num?.split("\n");
+
+                    if (num) {
+                        rs.push(...num);
+                    }
+                }
+
+                // Trả về giá trị để in ra ngoài
+                return {
+                    resultDate: ngay,
+                    rs,
+                };
+            });
+        } else if (vt === 4) {
+            results = await page.evaluate(() => {
+                const ngay = document.querySelector(
+                    "#box_tructiepkqxs div.content td td.ngay"
+                )?.innerText;
+
+                const rs = [];
+
+                for (let i = 8; i >= 0; i--) {
+                    let num = document.querySelector(
+                        `#box_tructiepkqxs div.content td + td table td + td + td + td .giai${
+                            i === 0 ? "db" : i
+                        }`
+                    )?.innerText;
+
+                    num = num?.split("\n");
+
+                    if (num) {
+                        rs.push(...num);
+                    }
+                }
+
+                // Trả về giá trị để in ra ngoài
+                return {
+                    resultDate: ngay,
+                    rs,
+                };
+            });
+        }
+
+        // In kết quả ra console
+        console.log("Ngày:", results);
+
+        const nowKQXS = parseDate(results.resultDate);
         const dayKQXS = nowKQXS.getDate();
         const monthKQXS = nowKQXS.getMonth();
         const yearKQXS = nowKQXS.getFullYear();
 
         if (
-            results &&
+            results.rs.length > 0 &&
             day === dayKQXS &&
             month === monthKQXS &&
             year === yearKQXS
         ) {
-            await addKqxs(results, domain, province, stt);
+            await addKqxs(results, province);
         }
-    };
 
-    const addKqxs = async (results, domain, province, stt) => {
+        // Đóng trình duyệt
+        await browser.close();
+    }
+
+    const addKqxs = async (results, province) => {
         try {
             const kqxs = await KqxsController.findCron({
-                resultDate: results.t.issueList[stt].turnNum,
+                resultDate: results.resultDate,
                 province: province,
             });
 
             if (kqxs.length === 0) {
-                let data = JSON.parse(results.t.issueList[stt].detail);
-                data = data.reverse();
-                data = data.map((item) => item.split(","));
-
-                let rs = data.reduce((acc, curr) => acc.concat(curr), []);
-
                 const kqxsObj = {
-                    domain: domain,
+                    domain: "mn",
                     province: province,
-                    resultDate: results.t.issueList[stt].turnNum,
-                    result: rs,
+                    resultDate: results.resultDate,
+                    result: results.rs,
                 };
 
                 await KqxsController.createCron(kqxsObj);
 
+                await paySms("mn");
+
                 console.log("lấy kết quả xổ số mn success");
+            } else if (
+                kqxs[0].result.length < 18 ||
+                kqxs[0].result[kqxs[0].result.length - 1] === ""
+            ) {
+                const kqxsObj = {
+                    id: kqxs[0]._id,
+                    result: results.rs,
+                };
+
+                await KqxsController.updateCron(kqxsObj);
+
+                await paySms("mn");
+
+                console.log("cập nhật kết quả xổ số mn success");
             }
         } catch (error) {
             console.error("Lỗi khi lấy kết quả xổ số:", error);
@@ -148,35 +270,9 @@ function autoFindResultKQXSMN() {
                 // payRevenue(date, formattedDate, 'mn');
 
                 // Kiểm tra xem có phải trong khoảng thời gian từ 16h đến 18h40 không
-                if (hours === 16 && minutes <= 59) {
+                if (hours === 16 && minutes >= 10 && minutes <= 40) {
                     console.log("KQXS");
                     await fetchLotteryResults();
-                }
-            } catch (error) {
-                console.log(error);
-            }
-        },
-        {
-            timezone: "Asia/Ho_Chi_Minh", // Thay đổi nếu bạn ở múi giờ khác
-        }
-    );
-
-    cron.schedule(
-        "*/1 16 * * *",
-        async (job) => {
-            try {
-                // Lấy thời gian hiện tại
-                const now = new Date();
-                const hours = now.getHours();
-                const minutes = now.getMinutes();
-
-                // Kiểm tra xem có phải trong khoảng thời gian từ 16h25 đến 17h không
-                if (
-                    (hours === 16 && minutes >= 25) ||
-                    (hours === 17 && minutes === 0)
-                ) {
-                    console.log("PAY SMS");
-                    await paySms("mn");
                 }
             } catch (error) {
                 console.log(error);
@@ -208,7 +304,7 @@ function autoFindResultKQXSMN() {
 
             console.log(kqxs);
 
-            if (kqxs.length >= 3) {
+            if (kqxs.length >= 1) {
                 const date = moment(now).format("YYYY-MM-DD");
                 const smsMany = await SmsController.findSmsByStatusCron(
                     domain,

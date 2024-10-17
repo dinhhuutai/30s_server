@@ -176,6 +176,22 @@ class MemberController {
         }
     }
 
+    async findAllMember(req, res, next) {
+        try {
+            const memberAll = await Member.find();
+
+            return res.status(200).json({
+                success: true,
+                memberAll,
+            });
+        } catch (error) {
+            console.log(error);
+            return res
+                .status(500)
+                .json({ success: false, message: "Internal server error" });
+        }
+    }
+
     async findAllMemberCron() {
         try {
             const memberAll = await Member.find();

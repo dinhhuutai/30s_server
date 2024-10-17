@@ -11,6 +11,10 @@ router.post(
 router.post("/findMemberById/:id", MemberController.findMemberById);
 router.post("/delete/:id", MemberController.delete);
 router.post("/update/:id", MemberController.update);
-router.post("/findMemberByNameAndPhone/:idUser", MemberController.findMemberByNameAndPhone);
+router.post(
+    "/findMemberByNameAndPhone/:idUser",
+    MemberController.findMemberByNameAndPhone
+);
+router.post("/findAllMember", MemberController.findAllMember);
 
 module.exports = router;

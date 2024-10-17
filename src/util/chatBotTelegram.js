@@ -11,7 +11,7 @@ const OnlyAdminEditController = require("../app/controllers/OnlyAdminEditControl
 
 async function chatBotTelegram() {
     const resOnlyAdminEdit = await OnlyAdminEditController.findCron();
-    const rs = resOnlyAdminEdit.onlyAdminEdit[0];
+    const rs = resOnlyAdminEdit?.onlyAdminEdit[0];
 
     // replace the value below with the Telegram token you receive from @BotFather
     const token =

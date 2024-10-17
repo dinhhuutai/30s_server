@@ -60,6 +60,20 @@ class KqxsController {
         } catch (error) {}
     }
 
+    async updateCron(data) {
+        try {
+            const kqxs = await Kqxs.findByIdAndUpdate(
+                data.id,
+                {
+                    result: data.result,
+                },
+                { new: true }
+            );
+
+            return kqxs;
+        } catch (error) {}
+    }
+
     // [POST] /api/v1/kqxs/findKqxsByDate
     async findKqxsByDate(req, res, next) {
         try {
