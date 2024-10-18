@@ -34,7 +34,7 @@ async function chatBotTelegram() {
         if (msg.text === "/id") {
             bot.sendMessage(chatId, `${chatId}`);
         } else {
-            console.log(chatId)
+            console.log(chatId);
             const tongxac = await handleSms(msg.text, chatId, userId);
 
             if (tongxac && tongxac > 0) {
@@ -104,6 +104,8 @@ async function handleSms(content, idTelegram, userId) {
                 diem34con += e.diem;
             }
         });
+
+        console.log("diem34con: ", smsDetailList);
 
         let form = {};
         const date = moment(dateCreate).format("YYYY-MM-DD");

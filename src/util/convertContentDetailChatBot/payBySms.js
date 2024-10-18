@@ -1,13 +1,13 @@
-const payBaoLo = require("../pay/payBaoLo");
-const payBayLo = require("../pay/payBayLo");
-const payDaThang = require("../pay/payDaThang");
-const payDaXien = require("../pay/payDaXien");
-const payDau = require("../pay/payDau");
-const payDauDuoi = require("../pay/payDauDuoi");
-const payDuoi = require("../pay/payDuoi");
-const payXiuChu = require("../pay/payXiuChu");
-const payXiuChuDau = require("../pay/payXiuChuDau");
-const payXiuChuDuoi = require("../pay/payXiuChuDuoi");
+const payBaoLo = require("../payChatBot/payBaoLo");
+const payBayLo = require("../payChatBot/payBayLo");
+const payDaThang = require("../payChatBot/payDaThang");
+const payDaXien = require("../payChatBot/payDaXien");
+const payDau = require("../payChatBot/payDau");
+const payDauDuoi = require("../payChatBot/payDauDuoi");
+const payDuoi = require("../payChatBot/payDuoi");
+const payXiuChu = require("../payChatBot/payXiuChu");
+const payXiuChuDau = require("../payChatBot/payXiuChuDau");
+const payXiuChuDuoi = require("../payChatBot/payXiuChuDuoi");
 
 function payBySms(sms, infoPlayer, kqxs) {
     sms = sms.map((e, index) => {
