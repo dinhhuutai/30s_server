@@ -46,7 +46,7 @@ class RevenueController {
             const revenue = await Revenue.find({
                 idMember: req.body.idMember,
                 domain: req.body.domain,
-                resultDate: req.query.resultDate,
+                resultDate: req.body.resultDate,
             });
 
             return res.status(200).json({
