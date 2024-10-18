@@ -33,7 +33,7 @@ autoFindResultKQXSMN();
 autoFindResultKQXSMT();
 
 
-chatBotTelegram();
+// chatBotTelegram();
 chatBotWhatsApp(app);
 
 const PORT = 5000;

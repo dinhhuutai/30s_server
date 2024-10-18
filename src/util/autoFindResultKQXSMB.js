@@ -51,8 +51,15 @@ function autoFindResultKQXSMB() {
             let ngay = document.querySelector(
                 "#box_tructiepkqxs td.ngay span"
             )?.innerText;
-
             ngay = ngay.slice(6);
+
+            let [day, month, year] = ngay?.split("/").map(Number);
+
+            if ((year + "").length === 2) {
+                year = Number("20" + year);
+            }
+
+            ngay = day + "/" + month + "/" + year;
 
             const rs = [];
 

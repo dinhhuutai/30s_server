@@ -81,9 +81,17 @@ function autoFindResultKQXSMN() {
 
         if (vt === 1) {
             results = await page.evaluate(() => {
-                const ngay = document.querySelector(
+                let ngay = document.querySelector(
                     "#box_tructiepkqxs div.content td td.ngay"
                 )?.innerText;
+
+                let [day, month, year] = ngay?.split("/").map(Number);
+
+                if ((year + "").length === 2) {
+                    year = Number("20" + year);
+                }
+
+                ngay = day + "/" + month + "/" + year;
 
                 const rs = [];
 
@@ -109,9 +117,17 @@ function autoFindResultKQXSMN() {
             });
         } else if (vt === 2) {
             results = await page.evaluate(() => {
-                const ngay = document.querySelector(
+                let ngay = document.querySelector(
                     "#box_tructiepkqxs div.content td td.ngay"
                 )?.innerText;
+
+                let [day, month, year] = ngay?.split("/").map(Number);
+
+                if ((year + "").length === 2) {
+                    year = Number("20" + year);
+                }
+
+                ngay = day + "/" + month + "/" + year;
 
                 const rs = [];
 
@@ -137,9 +153,17 @@ function autoFindResultKQXSMN() {
             });
         } else if (vt === 3) {
             results = await page.evaluate(() => {
-                const ngay = document.querySelector(
+                let ngay = document.querySelector(
                     "#box_tructiepkqxs div.content td td.ngay"
                 )?.innerText;
+
+                let [day, month, year] = ngay?.split("/").map(Number);
+
+                if ((year + "").length === 2) {
+                    year = Number("20" + year);
+                }
+
+                ngay = day + "/" + month + "/" + year;
 
                 const rs = [];
 
@@ -165,9 +189,17 @@ function autoFindResultKQXSMN() {
             });
         } else if (vt === 4) {
             results = await page.evaluate(() => {
-                const ngay = document.querySelector(
+                let ngay = document.querySelector(
                     "#box_tructiepkqxs div.content td td.ngay"
                 )?.innerText;
+
+                let [day, month, year] = ngay?.split("/").map(Number);
+
+                if ((year + "").length === 2) {
+                    year = Number("20" + year);
+                }
+
+                ngay = day + "/" + month + "/" + year;
 
                 const rs = [];
 
@@ -220,6 +252,8 @@ function autoFindResultKQXSMN() {
                 resultDate: results.resultDate,
                 province: province,
             });
+
+            console.log(kqxs);
 
             if (kqxs.length === 0) {
                 const kqxsObj = {
