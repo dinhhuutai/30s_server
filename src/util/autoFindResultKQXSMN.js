@@ -18,6 +18,7 @@ const payBaylo = require("./pay/payBayLo");
 const MemberController = require("../app/controllers/MemberController");
 const RevenueController = require("../app/controllers/RevenueController");
 const OnlyAdminEditController = require("../app/controllers/OnlyAdminEditController");
+//const puppeteer = require("puppeteer-core");
 const puppeteer = require("puppeteer");
 
 function autoFindResultKQXSMN() {
@@ -69,6 +70,9 @@ function autoFindResultKQXSMN() {
 
     async function findKQXSMN(url, vt, day, month, year, province) {
         // Khởi động trình duyệt
+        // const browser = await puppeteer.launch({
+        //     executablePath: "/usr/bin/google-chrome",
+        // });
         const browser = await puppeteer.launch();
         const page = await browser.newPage();
 

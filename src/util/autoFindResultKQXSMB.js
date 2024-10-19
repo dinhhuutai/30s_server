@@ -19,6 +19,7 @@ const payDaXien = require("./pay/payDaXien");
 const payBaylo = require("./pay/payBayLo");
 const OnlyAdminEditController = require("../app/controllers/OnlyAdminEditController");
 const puppeteer = require("puppeteer");
+//const puppeteer = require("puppeteer-core");
 
 function autoFindResultKQXSMB() {
     const fetchLotteryResults = async () => {
@@ -39,7 +40,11 @@ function autoFindResultKQXSMB() {
 
     async function findKQXSMB(url, day, month, year, province) {
         // Khởi động trình duyệt
+        // const browser = await puppeteer.launch({
+        //     executablePath: "/usr/bin/google-chrome",
+        // });
         const browser = await puppeteer.launch();
+
         const page = await browser.newPage();
 
         // Tới trang kết quả xổ số Minh Ngọc
