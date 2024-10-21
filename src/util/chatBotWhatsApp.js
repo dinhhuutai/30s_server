@@ -10,9 +10,6 @@ const UserController = require("../app/controllers/UserController");
 const OnlyAdminEditController = require("../app/controllers/OnlyAdminEditController");
 
 async function chatBotWhatsApp(app) {
-    const resOnlyAdminEdit = await OnlyAdminEditController.findCron();
-    const rs = resOnlyAdminEdit?.onlyAdminEdit[0];
-
     app.post("/webhook/whatsapp", async (req, res) => {
         try {
             const message = req.body.messages[0]?.text.body;
@@ -22,6 +19,10 @@ async function chatBotWhatsApp(app) {
 
             console.log(req.body);
             if (message === "/id") {
+                const resOnlyAdminEdit =
+                    await OnlyAdminEditController.findCron();
+                const rs = resOnlyAdminEdit?.onlyAdminEdit[0];
+
                 const options = {
                     method: "POST",
                     url: `https://gate.whapi.cloud/messages/text?token=${rs?.tokenChatBotWhatsApp}`,
@@ -38,10 +39,11 @@ async function chatBotWhatsApp(app) {
 
                 request(options, function (error, response, body) {
                     if (error) throw new Error(error);
+                    console.log("Response:", body);
                 });
             } else {
                 console.log(sdtSend);
-                if (sdtSend !== "0906411676") {
+                if (sdtSend !== "0923044965") {
                     console.log(message);
                     const tongxac = await handleSms(message, chatId, sdtSend);
                 }
