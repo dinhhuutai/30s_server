@@ -77,7 +77,10 @@ async function handleSms(content, idTelegram, userId) {
             });
         }
 
-        let { arr, errorSyntax } = convertContentDetail(content, dateCreate);
+        let { arr, errorSyntax, locationError } = convertContentDetail(
+            content,
+            dateCreate
+        );
         let smsDetailList = arr;
 
         let mien = smsDetailList[0] && smsDetailList[0].domain;
@@ -137,6 +140,12 @@ async function handleSms(content, idTelegram, userId) {
                 tongdiem,
                 tongxac,
                 typeSms: "Telegram",
+                locationError:
+                    locationError?.location?.length >= 2 &&
+                    (locationError?.location[0] === undefined ||
+                        locationError?.location[1] === undefined)
+                        ? []
+                        : locationError?.location,
             };
         } else {
             form = {
@@ -153,6 +162,12 @@ async function handleSms(content, idTelegram, userId) {
                 tongtrung,
                 revenue,
                 typeSms: "Telegram",
+                locationError:
+                    locationError?.location?.length >= 2 &&
+                    (locationError?.location[0] === undefined ||
+                        locationError?.location[1] === undefined)
+                        ? []
+                        : locationError?.location,
             };
         }
 

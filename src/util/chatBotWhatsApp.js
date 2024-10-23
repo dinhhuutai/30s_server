@@ -145,6 +145,12 @@ async function handleSms(content, chatId, sdtSend) {
                 tongdiem,
                 tongxac,
                 typeSms: "WhatsApp",
+                locationError:
+                    locationError?.location?.length >= 2 &&
+                    (locationError?.location[0] === undefined ||
+                        locationError?.location[1] === undefined)
+                        ? []
+                        : locationError?.location,
             };
         } else {
             form = {
@@ -161,6 +167,12 @@ async function handleSms(content, chatId, sdtSend) {
                 tongtrung,
                 revenue,
                 typeSms: "WhatsApp",
+                locationError:
+                    locationError?.location?.length >= 2 &&
+                    (locationError?.location[0] === undefined ||
+                        locationError?.location[1] === undefined)
+                        ? []
+                        : locationError?.location,
             };
         }
 

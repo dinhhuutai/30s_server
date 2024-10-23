@@ -27,6 +27,9 @@ const SmsSchema = new Schema({
         type: String,
         require: true,
     },
+    locationError: {
+        type: Array,
+    },
     typeSms: {
         type: String,
     },
