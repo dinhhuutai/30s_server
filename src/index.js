@@ -16,8 +16,8 @@ const app = express();
 db.connect();
 
 const corsOptions = {
-    //origin: "http://tocvietxuanloc.com",
-    origin: "http://localhost:3000",
+    origin: "http://3.26.218.94",
+    //origin: "http://localhost:3000",
     //origin: "https://7882-2402-800-63ad-dbeb-15dd-d7ec-bf16-b6c1.ngrok-free.app",
     credentials: true, //access-control-allow-credentials:true
     optionSuccessStatus: 200,
