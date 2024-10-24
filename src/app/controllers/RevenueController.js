@@ -21,6 +21,26 @@ class RevenueController {
         }
     }
 
+    async updateCron(id, form) {
+        try {
+            const revenue = await Revenue.findByIdAndUpdate(
+                id,
+                {
+                    ...form,
+                    updateDate: Date.now(),
+                },
+                { new: true }
+            );
+
+            return {
+                success: true,
+                revenue,
+            };
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
     // [POST] /api/v1/revenue/create
     async create(req, res, next) {
         try {

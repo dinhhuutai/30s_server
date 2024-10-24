@@ -17,9 +17,10 @@ const payXiuChuDuoi = require("./pay/payXiuChuDuoi");
 const payDaThang = require("./pay/payDaThang");
 const payDaXien = require("./pay/payDaXien");
 const payBaylo = require("./pay/payBayLo");
+const payTamlo = require("./pay/payTamLo");
 const OnlyAdminEditController = require("../app/controllers/OnlyAdminEditController");
-//const puppeteer = require("puppeteer");
-const puppeteer = require("puppeteer-core");
+const puppeteer = require("puppeteer");
+//const puppeteer = require("puppeteer-core");
 
 function autoFindResultKQXSMB() {
     const fetchLotteryResults = async () => {
@@ -40,10 +41,10 @@ function autoFindResultKQXSMB() {
 
     async function findKQXSMB(url, day, month, year, province) {
         // Khởi động trình duyệt
-        const browser = await puppeteer.launch({
-            executablePath: "/usr/bin/google-chrome",
-        });
-        //const browser = await puppeteer.launch();
+        // const browser = await puppeteer.launch({
+        //     executablePath: "/usr/bin/google-chrome",
+        // });
+        const browser = await puppeteer.launch();
 
         const page = await browser.newPage();
 
@@ -279,6 +280,12 @@ function autoFindResultKQXSMB() {
                                                 sms.idMember,
                                                 kqxs
                                             );
+                                        } else if (e.typePlay === "tamlo") {
+                                            pay = payTamlo(
+                                                e,
+                                                sms.idMember,
+                                                kqxs
+                                            );
                                         }
 
                                         await SmsDetailController.updateCron(
@@ -320,6 +327,7 @@ function autoFindResultKQXSMB() {
     const payRevenue = async (date, formattedDate, domain) => {
         const members = await MemberController.findAllMemberCron();
 
+        //console.log('members: ', members);
         if (members.success) {
             await Promise.all(
                 members?.memberAll?.map(async (member, index) => {
@@ -338,8 +346,6 @@ function autoFindResultKQXSMB() {
                             formattedDate,
                             domain
                         );
-
-                    //console.log(resRevenue.revenue);
 
                     if (resRevenue.revenue.length < 1) {
                         let diem2con = 0;
@@ -369,6 +375,34 @@ function autoFindResultKQXSMB() {
                         };
 
                         await RevenueController.createCron(form);
+                    } else {
+                        let diem2con = 0;
+                        let diem34con = 0;
+                        let tongxac = 0;
+                        let tongtrung = 0;
+                        let revenue = 0;
+
+                        smsManyOfMember?.sms?.map((e) => {
+                            diem2con += e.diem2con;
+                            diem34con += e.diem34con;
+                            tongxac += e.tongxac;
+                            tongtrung += e.tongtrung;
+                            revenue += e.revenue;
+                        });
+
+                        const form = {
+                            domain: domain,
+                            diem2con,
+                            diem34con,
+                            tongxac,
+                            tongtrung,
+                            revenue,
+                        };
+
+                        await RevenueController.updateCron(
+                            resRevenue.revenue[0]._id,
+                            form
+                        );
                     }
                 })
             );

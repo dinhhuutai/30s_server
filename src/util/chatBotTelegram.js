@@ -35,9 +35,13 @@ async function chatBotTelegram() {
             bot.sendMessage(chatId, `${chatId}`);
         } else {
             console.log(chatId);
-            const tongxac = await handleSms(msg.text, chatId, userId);
+            const { tongxac, errorSyntax } = await handleSms(
+                msg.text,
+                chatId,
+                userId
+            );
 
-            if (tongxac && tongxac > 0) {
+            if (tongxac && tongxac > 0 && !errorSyntax) {
                 bot.sendMessage(chatId, `Tiền xác tin: ${tongxac}`, {
                     reply_to_message_id: messageId,
                 });
@@ -183,7 +187,7 @@ async function handleSms(content, idTelegram, userId) {
             );
 
             if (resSmsDetail.success) {
-                return tongxac;
+                return { tongxac, errorSyntax };
             } else {
                 await SmsController.updateCron(resSms?.sms._id, {
                     statusSms: "Chưa xử lý",

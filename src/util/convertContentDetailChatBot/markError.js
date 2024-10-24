@@ -115,7 +115,17 @@ function markError(content, errorSyntaxDetail, mien, dayOfWeek) {
                             content[i]
                         )
                     ) {
-                        keoTmp += content[i];
+                        keoTmp += content[i]
+                            .normalize("NFD")
+                            .replace(/[\u0300-\u036f]/g, "")
+                            .toLowerCase()
+                            .replace(/đ/g, "d")
+                            .replace(/ă/g, "a")
+                            .replace(/â/g, "a")
+                            .replace(/ư/g, "u")
+                            .replace(/ơ/g, "o")
+                            .replace(/ô/g, "o")
+                            .replace(/ê/g, "e");
                     } else if (/^[0-9]$/.test(content[i])) {
                         soSauTmp += content[i];
                     }
@@ -160,7 +170,17 @@ function markError(content, errorSyntaxDetail, mien, dayOfWeek) {
                     isFinite(Number(content[i + 1]))
                 )
             ) {
-                stringRedun += content[i];
+                stringRedun += content[i]
+                    .normalize("NFD")
+                    .replace(/[\u0300-\u036f]/g, "")
+                    .toLowerCase()
+                    .replace(/đ/g, "d")
+                    .replace(/ă/g, "a")
+                    .replace(/â/g, "a")
+                    .replace(/ư/g, "u")
+                    .replace(/ơ/g, "o")
+                    .replace(/ô/g, "o")
+                    .replace(/ê/g, "e");
 
                 if (positionFirst === -1) {
                     positionFirst = i;
@@ -230,6 +250,8 @@ function markError(content, errorSyntaxDetail, mien, dayOfWeek) {
 
                 if (daiTmp.toLowerCase() === "dng") {
                     daiTmp = "dg";
+                } else if (daiTmp.toLowerCase() === "hcm") {
+                    daiTmp = "tp";
                 } else if (daiTmp.toLowerCase() === "btr") {
                     daiTmp = "br";
                 } else if (daiTmp.toLowerCase() === "dlk") {
@@ -662,8 +684,6 @@ function markError(content, errorSyntaxDetail, mien, dayOfWeek) {
         let positionEnd;
         let ddTmp = "";
 
-        console.log(errorSyntaxDetail.num);
-
         while (positionFirstTmp !== -1) {
             if (
                 !/^[a-zA-Z0-9ÀÁẢÃẠÂẤẦẬẪẨẮĂẰẴẶẲÊẾỀỆỂỄÉÈẺẼẸÓÒỎÕỌƠỚỜỞỠỢƯỨỪỮỬỰĐÌÍỊĨỈàáảãạâấầậẫẩắằẵặẳêếềệểễéèẻẽẹóòỏõọơớờởỡợưứừữửựđìíịĩỉ]$/.test(
@@ -721,8 +741,6 @@ function markError(content, errorSyntaxDetail, mien, dayOfWeek) {
                     positionFirst + errorSyntaxDetail.num.length
                 );
 
-                console.log("positionFirst: ", positionFirst);
-
                 positionFirstTmp = positionFirst;
                 ddTmp = "";
             }
@@ -744,13 +762,11 @@ function markError(content, errorSyntaxDetail, mien, dayOfWeek) {
                     content[positionFirst + errorSyntaxDetail.num.length]
                 )
             ) {
-                console.log(xcTmp);
                 for (
                     let i = positionFirst + errorSyntaxDetail.num.length;
                     i < length;
                     i++
                 ) {
-                    console.log(xcTmp);
                     if (
                         /^[a-zA-ZÀÁẢÃẠÂẤẦẬẪẨẮĂẰẴẶẲÊẾỀỆỂỄÉÈẺẼẸÓÒỎÕỌƠỚỜỞỠỢƯỨỪỮỬỰĐÌÍỊĨỈàáảãạâấầậẫẩắằẵặẳêếềệểễéèẻẽẹóòỏõọơớờởỡợưứừữửựđìíịĩỉ]$/.test(
                             content[i]
@@ -1146,8 +1162,6 @@ function markError(content, errorSyntaxDetail, mien, dayOfWeek) {
                     positionFirst + errorSyntaxDetail.num.length
                 );
 
-                console.log("positionFirst: ", positionFirst);
-
                 positionFirstTmp = positionFirst;
                 xcTmp = "";
             }
@@ -1159,8 +1173,6 @@ function markError(content, errorSyntaxDetail, mien, dayOfWeek) {
         let positionFirstTmp = positionFirst;
         let positionEnd;
         let kdTmp = "";
-
-        console.log(errorSyntaxDetail);
 
         while (positionFirstTmp !== -1) {
             if (
@@ -1214,8 +1226,6 @@ function markError(content, errorSyntaxDetail, mien, dayOfWeek) {
                     errorSyntaxDetail.num,
                     positionFirst + errorSyntaxDetail.num.length
                 );
-
-                console.log("positionFirst: ", positionFirst);
 
                 positionFirstTmp = positionFirst;
                 kdTmp = "";

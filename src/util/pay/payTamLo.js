@@ -1,4 +1,4 @@
-function payBayLo(content, info, kqxs) {
+function payTamLo(content, info, kqxs) {
     let diem = 0;
     let tienxac = 0;
     let tientrung = 0;
@@ -12,9 +12,9 @@ function payBayLo(content, info, kqxs) {
                 if (
                     s.length >= content.number[0].length &&
                     s.endsWith(content.number[0]) &&
-                    ((i <= 6 &&
+                    ((i <= 7 &&
                         (content.domain === "mn" || content.domain === "mt")) ||
-                        (content.domain === "mb" && i <= 6))
+                        (content.domain === "mb" && i <= 7))
                 ) {
                     quantitySoTrung += 1;
                 }
@@ -49,4 +49,4 @@ function payBayLo(content, info, kqxs) {
     };
 }
 
-module.exports = payBayLo;
+module.exports = payTamLo;

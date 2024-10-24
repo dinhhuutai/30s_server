@@ -12,16 +12,28 @@ function payBayLo(content, info, kqxs) {
             ? 7
             : content.domain === "mb"
             ? 7
-            : 1) *
+            : 7) *
         content.province.length;
 
     tienxac =
         diem *
         (content.domain === "mn"
-            ? info.co2conMN
+            ? lengthSo === 2
+                ? info.co2conMN
+                : lengthSo === 3
+                ? info.co3conMN
+                : info.co4conMN
             : content.domain === "mt"
-            ? info.co2conMT
-            : info.co2conMB);
+            ? lengthSo === 2
+                ? info.co2conMT
+                : lengthSo === 3
+                ? info.co3conMT
+                : info.co4conMT
+            : lengthSo === 2
+            ? info.co2conMB
+            : lengthSo === 3
+            ? info.co3conMB
+            : info.co4conMB);
 
     kqxs.map((eKq) => {
         if (content.province.includes(eKq.province)) {
@@ -42,11 +54,23 @@ function payBayLo(content, info, kqxs) {
     tientrung =
         content.price *
         quantitySoTrung *
-        (content.domain === "mn"
-            ? info.trung2conMN
-            : content.domain === "mt"
-            ? info.trung2conMT
-            : info.trung2conMB);
+        (content.domain === 'mn'
+            ? lengthSo === 2
+                ? info.trung2conMN
+                : lengthSo === 3
+                ? info.trung3conMN
+                : info.trung4conMN
+            : content.domain === 'mt'
+            ? lengthSo === 2
+                ? info.trung2conMT
+                : lengthSo === 3
+                ? info.trung3conMT
+                : info.trung4conMT
+            : lengthSo === 2
+            ? info.trung2conMB
+            : lengthSo === 3
+            ? info.trung3conMB
+            : info.trung4conMB);
 
     return {
         diem: diem,

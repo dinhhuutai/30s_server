@@ -87,7 +87,7 @@ async function handleSms(content, chatId, sdtSend) {
             });
         }
 
-        let { arr, errorSyntax } = convertContentDetail(content, dateCreate);
+        let { arr, errorSyntax, locationError } = convertContentDetail(content, dateCreate);
         let smsDetailList = arr;
 
         let mien = smsDetailList[0] && smsDetailList[0].domain;

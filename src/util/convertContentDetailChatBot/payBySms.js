@@ -1,5 +1,6 @@
 const payBaoLo = require("../payChatBot/payBaoLo");
 const payBayLo = require("../payChatBot/payBayLo");
+const payTamLo = require("../payChatBot/payTamLo");
 const payDaThang = require("../payChatBot/payDaThang");
 const payDaXien = require("../payChatBot/payDaXien");
 const payDau = require("../payChatBot/payDau");
@@ -39,6 +40,8 @@ function payBySms(sms, infoPlayer, kqxs) {
             pay = payDaXien(e, infoPlayer, kqxs);
         } else if (e.typePlay === "baylo") {
             pay = payBayLo(e, infoPlayer, kqxs);
+        } else if (e.typePlay === "tamlo") {
+            pay = payTamLo(e, infoPlayer, kqxs);
         }
 
         return { ...e, ...pay };

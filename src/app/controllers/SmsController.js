@@ -259,9 +259,10 @@ class SmsController {
 
             console.log("dayStart: ", dayStart);
             console.log("dayEnd: ", dayEnd);
+            console.log("domain: ", domain);
 
             const sms = await Sms.find({
-                statusSms: { $in: ["Đang xử lý", "Đã xử lý"] },
+                statusSms: { $in: ["Đang xử lý", "Đã xử lý", "Đã xổ"] },
                 domain: domain,
                 resultDate: { $gte: dayStart, $lt: dayEnd },
                 deleted: false,
@@ -275,7 +276,7 @@ class SmsController {
             console.log(error);
         }
     }
-    
+
     async findSmsByStatus2(req, res, next) {
         try {
             const dayStart = new Date(req.query.date);
