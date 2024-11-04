@@ -121,6 +121,9 @@ const OnlyAdminEditSchema = new Schema({
     urlmb: {
         type: String,
     },
+    urlmbtt: {
+        type: String,
+    },
     codeRegister: {
         type: String,
     },

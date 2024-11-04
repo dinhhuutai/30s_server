@@ -1,6 +1,6 @@
 function parseDate(dateStr) {
     // Phân tích chuỗi ngày theo định dạng 'dd/mm/yyyy'
-    let [day, month, year] = dateStr?.split("/").map(Number);
+    let [day, month, year] = dateStr?.split("/")?.map(Number);
 
     if ((year + "").length === 2) {
         year = Number("20" + year);

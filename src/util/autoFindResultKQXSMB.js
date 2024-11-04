@@ -33,7 +33,7 @@ function autoFindResultKQXSMB() {
             const resOnlyAdminEdit = await OnlyAdminEditController.findCron();
             const rs = resOnlyAdminEdit.onlyAdminEdit[0];
 
-            await findKQXSMB(rs?.urlmb, day, month, year, "mb");
+            await findKQXSMB(rs?.urlmbtt, day, month, year, "mb");
         } catch (error) {
             console.error("Lỗi khi lấy kết quả xổ số:", error);
         }
@@ -64,6 +64,12 @@ function autoFindResultKQXSMB() {
             if ((year + "").length === 2) {
                 year = Number("20" + year);
             }
+            if (day < 10) {
+                day = '0' + day
+            }
+            if (month < 10) {
+                month = '0' + month
+            }
 
             ngay = day + "/" + month + "/" + year;
 
@@ -89,6 +95,8 @@ function autoFindResultKQXSMB() {
                 rs,
             };
         });
+
+        console.log("results: ", results);
 
         const nowKQXS = parseDate(results.resultDate);
         const dayKQXS = nowKQXS.getDate();

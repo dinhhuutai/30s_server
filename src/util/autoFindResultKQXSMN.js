@@ -95,6 +95,12 @@ function autoFindResultKQXSMN() {
                 if ((year + "").length === 2) {
                     year = Number("20" + year);
                 }
+                if (day < 10) {
+                    day = "0" + day;
+                }
+                if (month < 10) {
+                    month = "0" + month;
+                }
 
                 ngay = day + "/" + month + "/" + year;
 
@@ -130,6 +136,12 @@ function autoFindResultKQXSMN() {
 
                 if ((year + "").length === 2) {
                     year = Number("20" + year);
+                }
+                if (day < 10) {
+                    day = "0" + day;
+                }
+                if (month < 10) {
+                    month = "0" + month;
                 }
 
                 ngay = day + "/" + month + "/" + year;
@@ -167,6 +179,12 @@ function autoFindResultKQXSMN() {
                 if ((year + "").length === 2) {
                     year = Number("20" + year);
                 }
+                if (day < 10) {
+                    day = "0" + day;
+                }
+                if (month < 10) {
+                    month = "0" + month;
+                }
 
                 ngay = day + "/" + month + "/" + year;
 
@@ -202,6 +220,12 @@ function autoFindResultKQXSMN() {
 
                 if ((year + "").length === 2) {
                     year = Number("20" + year);
+                }
+                if (day < 10) {
+                    day = "0" + day;
+                }
+                if (month < 10) {
+                    month = "0" + month;
                 }
 
                 ngay = day + "/" + month + "/" + year;

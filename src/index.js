@@ -29,10 +29,10 @@ app.use(cors(corsOptions));
 routes(app);
 
 autoFindResultKQXSMB();
-//autoFindResultKQXSMN();
-//autoFindResultKQXSMT();
+autoFindResultKQXSMN();
+autoFindResultKQXSMT();
 
-//chatBotTelegram();
+chatBotTelegram();
 chatBotWhatsApp(app);
 
 const PORT = 5000;
