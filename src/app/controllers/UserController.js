@@ -9,7 +9,7 @@ const generateAccessToken = (user) => {
             id: user._id,
         },
         process.env.ACCESS_TOKEN_SECRET,
-        { expiresIn: "1d" }
+        { expiresIn: "365d" }
     );
 };
 const generateRefreshToken = (user) => {
@@ -362,6 +362,50 @@ class UserController {
             );
 
             return res.json({ success: true, user });
+        } catch (error) {
+            console.log(error);
+            return res
+                .status(500)
+                .json({ success: false, message: "Internal server error" });
+        }
+    }
+
+    async changePassword(req, res, next) {
+        try {
+            const id = req.params.id;
+            let userTmp = await User.findById(id);
+
+            const passwordValid = await argon2.verify(userTmp.password, req.body.password);
+            if (!passwordValid) {
+                return res.json({
+                    success: false,
+                    message: "Incorrect password",
+                });
+            }
+
+            const hashedPassword = await argon2.hash(req.body.passwordNew);
+
+            const refreshToken = generateRefreshToken(userTmp);
+            const accessToken = generateAccessToken(userTmp);
+            
+            res.cookie("refreshToken", refreshToken, {
+                httpOnly: true,
+                secure: false,
+                path: "/",
+                sameSite: "strict",
+            });
+
+            const user = await User.findByIdAndUpdate(
+                id,
+                {
+                    password: hashedPassword,
+                    refreshToken,
+                    updateDate: Date.now(),
+                },
+                { new: true }
+            ).select("-password -refreshToken -createDate -updateDate");
+
+            return res.json({ success: true, user, accessToken });
         } catch (error) {
             console.log(error);
             return res

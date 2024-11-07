@@ -94,10 +94,17 @@ class RevenueController {
     // [POST] /api/v1/revenue/findRevenueByDateAndIdMember
     async findRevenueByDateAndIdMember(req, res, next) {
         try {
-            const revenue = await Revenue.find({
+            const query = {
                 resultDate: req.body.date,
                 idUser: req.body.idUser,
-            }).populate("idMember");
+            };
+
+            // Kiểm tra nếu idMember không phải là 0, thì thêm vào query
+            if (req.body.idMember !== 0 && req.body.idMember !== "0") {
+                query.idMember = req.body.idMember;
+            }
+
+            const revenue = await Revenue.find(query).populate("idMember");
 
             return res.status(200).json({
                 success: true,

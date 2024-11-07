@@ -19,8 +19,8 @@ const payTamlo = require("./pay/payTamLo");
 const MemberController = require("../app/controllers/MemberController");
 const RevenueController = require("../app/controllers/RevenueController");
 const OnlyAdminEditController = require("../app/controllers/OnlyAdminEditController");
-const puppeteer = require("puppeteer-core");
 //const puppeteer = require("puppeteer");
+const puppeteer = require("puppeteer-core");
 
 function autoFindResultKQXSMN() {
     const fetchLotteryResults = async () => {
@@ -75,6 +75,7 @@ function autoFindResultKQXSMN() {
             executablePath: "/usr/bin/google-chrome",
         });
         //const browser = await puppeteer.launch();
+        
         const page = await browser.newPage();
 
         // Tới trang kết quả xổ số Minh Ngọc

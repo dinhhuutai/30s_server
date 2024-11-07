@@ -11,6 +11,7 @@ router.post("/refresh", userController.requestRefreshToken);
 router.post("/logout", verifyToken, userController.logout);
 router.get("/check", verifyToken, userController.checkUser);
 router.post("/update/:id", verifyToken, userController.update);
+router.post("/changePassword/:id", verifyToken, userController.changePassword);
 
 router.post("/create", userController.create);
 router.post("/find", userController.find);
