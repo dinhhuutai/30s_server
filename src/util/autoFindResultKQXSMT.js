@@ -69,7 +69,7 @@ function autoFindResultKQXSMT() {
         const browser = await puppeteer.launch({
             executablePath: "/usr/bin/google-chrome",
         });
-        //const browser = await puppeteer.launch();
+        // const browser = await puppeteer.launch();
 
         const page = await browser.newPage();
 

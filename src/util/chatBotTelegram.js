@@ -42,9 +42,9 @@ async function chatBotTelegram() {
             );
 
             if (tongxac && tongxac > 0 && !errorSyntax) {
-                bot.sendMessage(chatId, `Tiền xác tin: ${tongxac}`, {
-                    reply_to_message_id: messageId,
-                });
+                // bot.sendMessage(chatId, `Tiền xác tin: ${tongxac}`, {
+                //     reply_to_message_id: messageId,
+                // });
             }
         }
     });

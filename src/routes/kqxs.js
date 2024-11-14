@@ -6,6 +6,7 @@ const kqxsController = require("../app/controllers/KqxsController");
 router.post("/create", kqxsController.create);
 router.post("/find", kqxsController.find);
 router.post("/findKqxsByDate", kqxsController.findKqxsByDate);
+router.post("/deleteKQSXToday", kqxsController.deleteKQSXToday);
 router.post(
     "/findKqxsByDateAndProvince",
     kqxsController.findKqxsByDateAndProvince

@@ -37,6 +37,18 @@ class KqxsController {
         } catch (error) {}
     }
 
+    async deleteKQSXToday(req, res, next) {
+        try {
+            const kqxs = await Kqxs.deleteMany({
+                resultDate: req.body.date,
+            });
+
+            res.status(200).json({
+                success: true,
+            });
+        } catch (error) {}
+    }
+
     async createCron(data) {
         try {
             const kqxs = new Kqxs({

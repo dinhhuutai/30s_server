@@ -27,6 +27,8 @@ class UserController {
     async login(req, res, next) {
         const { username, password } = req.body;
 
+        console.log("username, password: ", { username, password });
+
         if (!username) {
             return res
                 .status(400)
@@ -375,7 +377,10 @@ class UserController {
             const id = req.params.id;
             let userTmp = await User.findById(id);
 
-            const passwordValid = await argon2.verify(userTmp.password, req.body.password);
+            const passwordValid = await argon2.verify(
+                userTmp.password,
+                req.body.password
+            );
             if (!passwordValid) {
                 return res.json({
                     success: false,
@@ -387,7 +392,7 @@ class UserController {
 
             const refreshToken = generateRefreshToken(userTmp);
             const accessToken = generateAccessToken(userTmp);
-            
+
             res.cookie("refreshToken", refreshToken, {
                 httpOnly: true,
                 secure: false,

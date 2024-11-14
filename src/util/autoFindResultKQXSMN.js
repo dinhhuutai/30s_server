@@ -75,7 +75,7 @@ function autoFindResultKQXSMN() {
             executablePath: "/usr/bin/google-chrome",
         });
         //const browser = await puppeteer.launch();
-        
+
         const page = await browser.newPage();
 
         // Tới trang kết quả xổ số Minh Ngọc
