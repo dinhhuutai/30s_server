@@ -52,6 +52,52 @@ class SmsDetailController {
         }
     }
 
+    // [POST] /api/v1/smsDetail/findSmsDetailByIdMemberAndDomainAndDate/:idUser
+    async findSmsDetailByIdMemberAndDomainAndDate(req, res, next) {
+        try {
+            const idUser = req.params.idUser;
+            const idMember = req.query.idMember;
+            const resultDate = req.query.resultDate;
+            const domain = req.query.domain;
+
+            let findDomain = {};
+            if (!(domain === "0" || domain === 0)) {
+                findDomain = {
+                    domain,
+                };
+            }
+
+            const dayStart = new Date(resultDate);
+            const dayEnd = new Date(resultDate);
+            dayStart.setUTCHours(0, 0, 0, 0);
+            dayEnd.setDate(dayEnd.getDate() + 1);
+            dayEnd.setUTCHours(0, 0, 0, 0);
+
+            console.log(dayStart)
+            console.log(dayEnd)
+            console.log(resultDate)
+            console.log(findDomain)
+            console.log(idMember)
+
+            const smsDetails = await SmsDetail.find({
+                idUser,
+                idMember,
+                resultDate: { $gte: dayStart, $lt: dayEnd },
+                ...findDomain,
+            });
+
+            return res.status(200).json({
+                success: true,
+                smsDetails,
+            });
+        } catch (error) {
+            console.log(error);
+            return res
+                .status(500)
+                .json({ success: false, message: "Internal server error" });
+        }
+    }
+
     // [POST] /api/v1/smsDetail/findSmsDetailByIdSms/:idSms
     async findSmsDetailByIdSms(req, res, next) {
         try {

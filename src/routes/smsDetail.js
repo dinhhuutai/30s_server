@@ -7,6 +7,10 @@ router.post("/create", SmsDetailController.create);
 router.post("/update/:id", SmsDetailController.update);
 router.post("/delete/:idSms", SmsDetailController.delete);
 router.post(
+    "/findSmsDetailByIdMemberAndDomainAndDate/:idUser",
+    SmsDetailController.findSmsDetailByIdMemberAndDomainAndDate
+);
+router.post(
     "/findSmsDetailByIdSms/:idSms",
     SmsDetailController.findSmsDetailByIdSms
 );

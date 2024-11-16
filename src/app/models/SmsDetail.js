@@ -7,6 +7,14 @@ const SmsDetailSchema = new Schema({
         require: [true, "encodeId Song no underfined"],
         unique: true,
     },
+    idUser: {
+        ref: "users",
+        type: mongoose.Schema.Types.ObjectId,
+    },
+    idMember: {
+        ref: "members",
+        type: mongoose.Schema.Types.ObjectId,
+    },
     idSms: {
         ref: "sms",
         type: mongoose.Schema.Types.ObjectId,

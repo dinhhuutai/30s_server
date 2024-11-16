@@ -24,7 +24,8 @@ const corsOptions = {
 };
 
 app.use(cookieParser());
-app.use(express.json());
+app.use(express.json({ limit: "10mb" })); // Tăng giới hạn lên 10MB
+app.use(express.urlencoded({ limit: "10mb", extended: true }));
 app.use(cors(corsOptions));
 routes(app);
 

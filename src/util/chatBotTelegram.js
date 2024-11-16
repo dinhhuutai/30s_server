@@ -179,7 +179,12 @@ async function handleSms(content, idTelegram, userId) {
 
         if (resSms.success) {
             smsDetailList = smsDetailList.map((e) => {
-                return { ...e, idSms: resSms.sms._id };
+                return {
+                    ...e,
+                    idSms: resSms.sms._id,
+                    idUser: resMember?.member.idUser,
+                    idMember: resMember?.member._id,
+                };
             });
 
             const resSmsDetail = await SmsDetailController.createCron(

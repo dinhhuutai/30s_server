@@ -87,7 +87,10 @@ async function handleSms(content, chatId, sdtSend) {
             });
         }
 
-        let { arr, errorSyntax, locationError } = convertContentDetail(content, dateCreate);
+        let { arr, errorSyntax, locationError } = convertContentDetail(
+            content,
+            dateCreate
+        );
         let smsDetailList = arr;
 
         let mien = smsDetailList[0] && smsDetailList[0].domain;
@@ -180,7 +183,12 @@ async function handleSms(content, chatId, sdtSend) {
 
         if (resSms.success) {
             smsDetailList = smsDetailList.map((e) => {
-                return { ...e, idSms: resSms.sms._id };
+                return {
+                    ...e,
+                    idSms: resSms.sms._id,
+                    idUser: resMember?.member.idUser,
+                    idMember: resMember?.member._id,
+                };
             });
 
             const resSmsDetail = await SmsDetailController.createCron(
