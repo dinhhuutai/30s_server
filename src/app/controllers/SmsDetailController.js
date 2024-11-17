@@ -86,6 +86,8 @@ class SmsDetailController {
                 ...findDomain,
             });
 
+            console.log('smsDetails: ', smsDetails);
+
             return res.status(200).json({
                 success: true,
                 smsDetails,
