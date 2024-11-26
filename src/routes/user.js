@@ -15,5 +15,6 @@ router.post("/changePassword/:id", verifyToken, userController.changePassword);
 
 router.post("/create", userController.create);
 router.post("/find", userController.find);
+router.post("/autoFindData", userController.autoFindData);
 
 module.exports = router;

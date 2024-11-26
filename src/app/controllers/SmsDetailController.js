@@ -12,6 +12,7 @@ class SmsDetailController {
                 return {
                     ...e,
                     encodeId: shortid.generate(),
+                    createDate: Date.now(),
                 };
             });
 
@@ -37,6 +38,7 @@ class SmsDetailController {
                 return {
                     ...e,
                     encodeId: shortid.generate(),
+                    createDate: Date.now(),
                 };
             });
 

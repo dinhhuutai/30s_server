@@ -361,7 +361,7 @@ class UserController {
                     updateDate: Date.now(),
                 },
                 { new: true }
-            );
+            ).select("-password");
 
             return res.json({ success: true, user });
         } catch (error) {
@@ -490,6 +490,29 @@ class UserController {
             };
         } catch (error) {
             return { success: false, message: "Internal server error" };
+        }
+    }
+
+    // [POST] /api/v1/user/autoFindData
+    async autoFindData(req, res, next) {
+        const id = req.body.id;
+
+        try {
+            const user = await User.findByIdAndUpdate(
+                id,
+                { autoFindData: true },
+                { new: true }
+            ).select("-password -refreshToken -createDate -updateDate");
+
+            res.status(200).json({
+                success: true,
+                user,
+            });
+        } catch (error) {
+            console.log(error);
+            return res
+                .status(500)
+                .json({ success: false, message: "Internal server error" });
         }
     }
 }

@@ -74,4 +74,6 @@ const SmsSchema = new Schema({
     },
 });
 
+SmsSchema.index([{ "createDate": 1 }], { expireAfterSeconds: 604800 })
+
 module.exports = mongoose.model("sms", SmsSchema);

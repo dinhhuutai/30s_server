@@ -47,4 +47,6 @@ const RevenueSchema = new Schema({
     },
 });
 
+RevenueSchema.index([{ "createDate": 1 }], { expireAfterSeconds: 604800 })
+
 module.exports = mongoose.model("revenues", RevenueSchema);

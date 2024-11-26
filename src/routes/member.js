@@ -16,5 +16,6 @@ router.post(
     MemberController.findMemberByNameAndPhone
 );
 router.post("/findAllMember", MemberController.findAllMember);
+router.post("/changeMember", MemberController.changeMember);
 
 module.exports = router;

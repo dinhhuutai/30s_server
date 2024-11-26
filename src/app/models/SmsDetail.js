@@ -4,7 +4,7 @@ const Schema = mongoose.Schema;
 const SmsDetailSchema = new Schema({
     encodeId: {
         type: String,
-        require: [true, "encodeId Song no underfined"],
+        required: [true, "encodeId Song no underfined"],
         unique: true,
     },
     idUser: {
@@ -65,4 +65,7 @@ const SmsDetailSchema = new Schema({
     },
 });
 
+SmsDetailSchema.index([{ "createDate": 1 }], { expireAfterSeconds: 604800 })
+
 module.exports = mongoose.model("smsDetails", SmsDetailSchema);
+

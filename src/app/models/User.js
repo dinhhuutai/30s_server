@@ -50,6 +50,10 @@ const UserSchema = new Schema({
         type: Date,
         default: Date.now,
     },
+    autoFindData: {
+        type: Boolean,
+        default: false,
+    }
 });
 
 module.exports = mongoose.model("users", UserSchema);
