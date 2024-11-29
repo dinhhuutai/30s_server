@@ -1,9 +1,13 @@
+require("dotenv").config();
 const Member = require("../models/Member");
 const shortid = require("shortid");
 const Sms = require("../models/Sms");
 const Revenue = require("../models/Revenue");
-//const puppeteer = require("puppeteer");
-const puppeteer = require("puppeteer-core");
+const puppeteer =
+    process.env.NODE_ENV === "production"
+        ? require("puppeteer-core")
+        : require("puppeteer");
+//const puppeteer = require("puppeteer-core");
 
 class MemberController {
     // [POST] /api/v1/member/create
@@ -216,11 +220,15 @@ class MemberController {
             const password = req.body.password;
 
             // Khởi động trình duyệt
-            browser = await puppeteer.launch({
-                executablePath: "/usr/bin/google-chrome",
-            });
-            // browser = await puppeteer.launch({ headless: false });
-
+            // browser = await puppeteer.launch({
+            //     executablePath: "/usr/bin/google-chrome",
+            // });
+            browser =
+                process.env.NODE_ENV === "production"
+                    ? await puppeteer.launch({
+                          executablePath: "/usr/bin/google-chrome",
+                      })
+                    : await puppeteer.launch();
             const page = await browser.newPage();
 
             // Tới trang đăng nhập

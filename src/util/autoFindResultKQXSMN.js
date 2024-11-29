@@ -1,3 +1,4 @@
+require("dotenv").config();
 const cron = require("node-cron");
 const axios = require("axios");
 const parseDate = require("./parseDate");
@@ -19,8 +20,11 @@ const payTamlo = require("./pay/payTamLo");
 const MemberController = require("../app/controllers/MemberController");
 const RevenueController = require("../app/controllers/RevenueController");
 const OnlyAdminEditController = require("../app/controllers/OnlyAdminEditController");
-//const puppeteer = require("puppeteer");
-const puppeteer = require("puppeteer-core");
+const puppeteer =
+    process.env.NODE_ENV === "production"
+        ? require("puppeteer-core")
+        : require("puppeteer");
+//const puppeteer = require("puppeteer-core");
 
 function autoFindResultKQXSMN() {
     const fetchLotteryResults = async () => {
@@ -71,10 +75,15 @@ function autoFindResultKQXSMN() {
 
     async function findKQXSMN(url, vt, day, month, year, province) {
         // Khởi động trình duyệt
-        const browser = await puppeteer.launch({
-            executablePath: "/usr/bin/google-chrome",
-        });
-        //const browser = await puppeteer.launch();
+        // const browser = await puppeteer.launch({
+        //     executablePath: "/usr/bin/google-chrome",
+        // });
+        const browser =
+            process.env.NODE_ENV === "production"
+                ? await puppeteer.launch({
+                      executablePath: "/usr/bin/google-chrome",
+                  })
+                : await puppeteer.launch();
 
         const page = await browser.newPage();
 

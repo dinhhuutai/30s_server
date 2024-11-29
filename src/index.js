@@ -16,8 +16,11 @@ const app = express();
 db.connect();
 
 const corsOptions = {
-    origin: "http://3.26.218.94",
-    //origin: "http://localhost:3000",
+    //origin: "http://3.26.218.94",
+    origin:
+        process.env.NODE_ENV === "production"
+            ? "http://3.26.218.94"
+            : "http://localhost:3000",
     //origin: "https://7882-2402-800-63ad-dbeb-15dd-d7ec-bf16-b6c1.ngrok-free.app",
     credentials: true, //access-control-allow-credentials:true
     optionSuccessStatus: 200,
@@ -29,11 +32,14 @@ app.use(express.urlencoded({ limit: "10mb", extended: true }));
 app.use(cors(corsOptions));
 routes(app);
 
-autoFindResultKQXSMB();
-autoFindResultKQXSMN();
-autoFindResultKQXSMT();
+if(process.env.NODE_ENV === "production") {
+    autoFindResultKQXSMB();
+    autoFindResultKQXSMN();
+    autoFindResultKQXSMT();
 
-chatBotTelegram();
+    chatBotTelegram();
+}
+
 chatBotWhatsApp(app);
 
 const PORT = 5000;

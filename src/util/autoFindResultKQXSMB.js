@@ -1,3 +1,5 @@
+require("dotenv").config();
+
 const cron = require("node-cron");
 const axios = require("axios");
 const moment = require("moment");
@@ -19,8 +21,11 @@ const payDaXien = require("./pay/payDaXien");
 const payBaylo = require("./pay/payBayLo");
 const payTamlo = require("./pay/payTamLo");
 const OnlyAdminEditController = require("../app/controllers/OnlyAdminEditController");
-//const puppeteer = require("puppeteer");
-const puppeteer = require("puppeteer-core");
+const puppeteer =
+    process.env.NODE_ENV === "production"
+        ? require("puppeteer-core")
+        : require("puppeteer");
+//const puppeteer = require("puppeteer-core");
 
 function autoFindResultKQXSMB() {
     const fetchLotteryResults = async () => {
@@ -41,10 +46,15 @@ function autoFindResultKQXSMB() {
 
     async function findKQXSMB(url, day, month, year, province) {
         // Khởi động trình duyệt
-        const browser = await puppeteer.launch({
-            executablePath: "/usr/bin/google-chrome",
-        });
-        //const browser = await puppeteer.launch();
+        // const browser = await puppeteer.launch({
+        //     executablePath: "/usr/bin/google-chrome",
+        // });
+        const browser =
+            process.env.NODE_ENV === "production"
+                ? await puppeteer.launch({
+                      executablePath: "/usr/bin/google-chrome",
+                  })
+                : await puppeteer.launch();
 
         const page = await browser.newPage();
 
@@ -65,10 +75,10 @@ function autoFindResultKQXSMB() {
                 year = Number("20" + year);
             }
             if (day < 10) {
-                day = '0' + day
+                day = "0" + day;
             }
             if (month < 10) {
-                month = '0' + month
+                month = "0" + month;
             }
 
             ngay = day + "/" + month + "/" + year;
