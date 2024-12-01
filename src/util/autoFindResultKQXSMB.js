@@ -53,14 +53,16 @@ function autoFindResultKQXSMB() {
             process.env.NODE_ENV === "production"
                 ? await puppeteer.launch({
                       executablePath: "/usr/bin/google-chrome",
+                      headless: true,
                   })
-                : await puppeteer.launch();
+                : await puppeteer.launch({ headless: false });
 
         const page = await browser.newPage();
 
         // Tới trang kết quả xổ số Minh Ngọc
         await page.goto(url, {
-            waitUntil: "domcontentloaded",
+            waitUntil: "networkidle2", // Đợi không còn yêu cầu mạng trong 500ms
+            timeout: 60000,
         });
 
         const results = await page.evaluate(() => {
