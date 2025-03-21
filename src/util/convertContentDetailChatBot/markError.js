@@ -105,6 +105,9 @@ let listDaiError = [
     'kgi',
     'dalat',
     'dlat',
+    'phuin',
+    'phuien',
+    'pien',
     'phuy',
     'phy',
     'phuyen',
@@ -512,6 +515,9 @@ function markError(content, errorSyntaxDetail, mien, dayOfWeek) {
                     } else if (daiTmp.toLowerCase() === 'dalat' || daiTmp.toLowerCase() === 'dlat') {
                         daiTmp = 'lt';
                     } else if (
+                        daiTmp.toLowerCase() === 'phuin' ||
+                        daiTmp.toLowerCase() === 'phuien' ||
+                        daiTmp.toLowerCase() === 'pien' ||
                         daiTmp.toLowerCase() === 'phuy' ||
                         daiTmp.toLowerCase() === 'phy' ||
                         daiTmp.toLowerCase() === 'phuyen' ||

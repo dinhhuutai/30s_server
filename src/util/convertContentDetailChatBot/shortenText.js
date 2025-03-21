@@ -186,6 +186,9 @@ let listDai = [
     'kgi',
     'dalat',
     'dlat',
+    'phuin',
+    'phuien',
+    'pien',
     'phuy',
     'phy',
     'phuyen',
@@ -281,6 +284,7 @@ function shortenText(content) {
         .replace(/ơ/g, 'o')
         .replace(/ô/g, 'o')
         .replace(/ê/g, 'e')
+        .replace(/…/g, '.')
         .replace(/-/g, '.')
         .replace(/_/g, '.')
         .replace(/~/g, '.')
@@ -300,6 +304,7 @@ function shortenText(content) {
         .replace(/\}/g, '.')
         .replace(/\[/g, '.')
         .replace(/\]/g, '.')
+        .replace(/!/g, '.')
         .replace(/'/g, '.')
         .replace(/"/g, '.')
         .replace(/</g, '.')
@@ -322,8 +327,6 @@ function shortenText(content) {
         .replace(/\s+/g, '.')
         .replace(/[.,:;+= ]/g, '.')
         .replace(/-/g, '.')
-        .replace(/…/g, '.')
-        .replace(/!/g, '.')
         .replace(/(\d)\s*nghìn/g, '$1.')
         .replace(/(\d)\s*nghin/g, '$1.')
         .replace(/(\d)\s*ngàn/g, '$1.')
